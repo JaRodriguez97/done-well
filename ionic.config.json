@@ -1,0 +1,7 @@
+{
+  "name": "done-well",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular-standalone"
+}
