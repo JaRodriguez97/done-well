@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">
+  <g fill="none" stroke-linecap="round">
+    <path d="M -40,190 C 90,140 240,260 440,210" stroke="#7567F8" stroke-width="2" stroke-opacity="0.28" />
+    <path d="M -40,235 C 110,185 255,305 440,255" stroke="#A99EFF" stroke-width="1.6" stroke-opacity="0.22" />
+    <path d="M -40,575 C 150,515 290,625 440,560" stroke="#A99EFF" stroke-width="2" stroke-opacity="0.24" />
+    <path d="M -40,615 C 165,555 305,665 440,605" stroke="#7567F8" stroke-width="1.5" stroke-opacity="0.30" />
+    <circle cx="200" cy="400" r="140" stroke="#7567F8" stroke-width="1.2" stroke-opacity="0.18" />
+    <circle cx="200" cy="400" r="175" stroke="#A99EFF" stroke-width="1" stroke-opacity="0.12" />
+  </g>
+</svg>

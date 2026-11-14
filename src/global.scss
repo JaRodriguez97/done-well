@@ -1,37 +1,197 @@
 /*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
+ * DoneWell - Estilos Globales (Dark Premium)
  */
 
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* Tema oscuro único consistente */
+@import "@ionic/angular/css/palettes/dark.always.css";
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* Base tipográfica y áreas seguras */
+html,
+body {
+  background-color: var(--ion-background-color);
+  color: var(--ion-text-color);
+  font-family: var(--ion-font-family);
+  font-size: var(--font-size-body);
+  line-height: 1.5;
+}
+
+ion-app,
+.app-content {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Fondo nocturno con patrón SVG curvo sutil */
+ion-content {
+  --background: var(--ion-background-color) url("/assets/svg/bg-curves.svg")
+    no-repeat center / cover;
+  --color: var(--ion-text-color);
+}
+
+ion-toolbar {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+  --border-color: rgba(255, 255, 255, 0.08);
+}
+
+ion-title {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* Contenedor de página (sistema de 8pt) */
+.dw-page-container {
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Tipografía reutilizable */
+.dw-title-main {
+  font-size: var(--font-size-title);
+  font-weight: 600;
+  color: var(--ion-text-color);
+  margin: 0;
+}
+
+.dw-title-section {
+  font-size: var(--font-size-section);
+  font-weight: 600;
+  color: var(--ion-text-color);
+  margin: 0;
+}
+
+.dw-text-muted {
+  font-size: var(--font-size-sub);
+  color: var(--dw-muted-text);
+}
+
+/* Glassmorphism moderado para tarjetas de resumen, modales y navegación */
+.glass-surface {
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid var(--dw-glass-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.glass-dark {
+  background: var(--dw-glass-bg);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+@supports not (
+  (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))
+) {
+  .glass-surface,
+  .glass-dark {
+    background: var(--dw-glass-fallback);
+  }
+}
+
+/* Tarjetas oscuras reutilizables */
+.dw-card {
+  background: var(--dw-surface-dark);
+  color: var(--ion-text-color);
+  border-radius: 12px;
+  padding: var(--space-3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Acentos laterales por categoría (nunca fondo completo) */
+.dw-border-trabajo {
+  border-left: 4px solid var(--color-trabajo);
+}
+
+.dw-border-personal {
+  border-left: 4px solid var(--color-personal);
+}
+
+.dw-border-estudios {
+  border-left: 4px solid var(--color-estudios);
+}
+
+.dw-border-compras {
+  border-left: 4px solid var(--color-compras);
+}
+
+.dw-border-urgente {
+  border-left: 4px solid var(--color-urgente);
+}
+
+.dw-border-otros {
+  border-left: 4px solid var(--color-otros);
+}
+
+/* Botones y accesibilidad táctil (>= 44x44px) */
+.btn-primary {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-tertiary);
+  --border-radius: 10px;
+  min-height: 44px;
+  font-weight: 600;
+}
+
+.dw-touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Estados visuales: cargando, vacío y error */
+.dw-state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-5) var(--space-3);
+  gap: var(--space-2);
+  color: var(--ion-text-color);
+
+  ion-icon {
+    font-size: 32px;
+    color: var(--ion-color-secondary);
+  }
+}
+
+.dw-error-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 10px;
+  background: var(--dw-surface-dark);
+  border: 1px solid var(--color-urgente);
+  color: var(--color-urgente);
+  font-size: var(--font-size-sub);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

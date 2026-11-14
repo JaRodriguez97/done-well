@@ -39,6 +39,7 @@
     "@angular/compiler-cli": "^17.3.0",
     "@angular/language-service": "^17.3.0",
     "@ionic/angular-toolkit": "^11.0.1",
+    "@ionic/cordova-builders": "^11.0.0",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.11.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",

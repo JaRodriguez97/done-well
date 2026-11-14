@@ -1,2 +1,88 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+// DoneWell - Tokens visuales globales (Midnight Violet)
+
+:root {
+  /* Paleta base Midnight Violet */
+  --ion-background-color: #0B1020;
+  --ion-background-color-rgb: 11, 16, 32;
+
+  --ion-text-color: #E5E2FF;
+  --ion-text-color-rgb: 229, 226, 255;
+
+  --ion-color-primary: #7567F8;
+  --ion-color-primary-rgb: 117, 103, 248;
+  --ion-color-primary-contrast: #FFFFFF;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #675bda;
+  --ion-color-primary-tint: #8376f9;
+
+  --ion-color-secondary: #A99EFF;
+  --ion-color-secondary-rgb: 169, 158, 255;
+  --ion-color-secondary-contrast: #0B1020;
+  --ion-color-secondary-contrast-rgb: 11, 16, 32;
+  --ion-color-secondary-shade: #958be0;
+  --ion-color-secondary-tint: #b2a8ff;
+
+  --ion-color-tertiary: #FFFFFF;
+  --ion-color-tertiary-rgb: 255, 255, 255;
+  --ion-color-tertiary-contrast: #0B1020;
+  --ion-color-tertiary-contrast-rgb: 11, 16, 32;
+  --ion-color-tertiary-shade: #e0e0e0;
+  --ion-color-tertiary-tint: #ffffff;
+
+  --ion-color-light: #E5E2FF;
+  --ion-color-light-rgb: 229, 226, 255;
+  --ion-color-light-contrast: #0B1020;
+  --ion-color-light-contrast-rgb: 11, 16, 32;
+  --ion-color-light-shade: #cac7e0;
+  --ion-color-light-tint: #e8e5ff;
+
+  --ion-color-medium: #151B30;
+  --ion-color-medium-rgb: 21, 27, 48;
+  --ion-color-medium-contrast: #E5E2FF;
+  --ion-color-medium-contrast-rgb: 229, 226, 255;
+  --ion-color-medium-shade: #12182a;
+  --ion-color-medium-tint: #2c3245;
+
+  --ion-color-danger: #FF7660;
+  --ion-color-danger-rgb: 255, 118, 96;
+  --ion-color-danger-contrast: #0B1020;
+  --ion-color-danger-contrast-rgb: 11, 16, 32;
+  --ion-color-danger-shade: #e06854;
+  --ion-color-danger-tint: #ff8470;
+
+  /* Superficies oscuras y transparencias */
+  --dw-surface-dark: #151B30;
+  --dw-glass-bg: rgba(17, 25, 40, 0.55);
+  --dw-glass-tab-bg: rgba(17, 25, 40, 0.7);
+  --dw-glass-fallback: rgba(17, 25, 40, 0.92);
+  --dw-glass-border: rgba(255, 255, 255, 0.25);
+  --dw-muted-text: rgba(229, 226, 255, 0.65);
+
+  /* Superficies nativas de Ionic */
+  --ion-card-background: var(--dw-surface-dark);
+  --ion-item-background: var(--dw-surface-dark);
+  --ion-toolbar-background: var(--ion-background-color);
+  --ion-toolbar-color: var(--ion-text-color);
+
+  /* Colores de categorías (solo para acentos laterales, chips e íconos) */
+  --color-trabajo: #7567F8;
+  --color-personal: #40E0D0;
+  --color-estudios: #6798FF;
+  --color-compras: #FFCC00;
+  --color-urgente: #FF7660;
+  --color-otros: #667499;
+
+  /* Tipografía global y escala de tamaños */
+  --ion-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, sans-serif;
+  --font-size-body: 1rem;
+  --font-size-sub: 0.875rem;
+  --font-size-section: 1.5rem;
+  --font-size-title: 2rem;
+
+  /* Espaciado (sistema de 8 puntos) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+}
