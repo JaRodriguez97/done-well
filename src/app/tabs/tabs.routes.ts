@@ -9,7 +9,8 @@ export const routes: Routes = [
     children: [
       {
         path: 'tab1',
-        loadComponent: () => import('../tab1/tab1.page').then((m) => m.Tab1Page),
+        loadComponent: () =>
+          import('../features/tasks/pages/tasks/tasks.page').then((m) => m.TasksPage),
       },
       {
         path: 'tab2',

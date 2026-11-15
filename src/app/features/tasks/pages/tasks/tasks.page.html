@@ -1,0 +1,62 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>DoneWell · Tareas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="dw-page-container">
+    @if (tasks$ | async; as tasks) {
+    <section class="glass-dark tasks-summary" aria-label="Resumen de tareas">
+      <div class="tasks-summary__metric">
+        <span class="tasks-summary__value">{{ countPending(tasks) }}</span>
+        <span class="dw-text-muted">Pendientes</span>
+      </div>
+      <div class="tasks-summary__divider" aria-hidden="true"></div>
+      <div class="tasks-summary__metric">
+        <span class="tasks-summary__value tasks-summary__value--accent">
+          {{ countCompleted(tasks) }}
+        </span>
+        <span class="dw-text-muted">Completadas</span>
+      </div>
+    </section>
+
+    <app-task-form
+      [disabled]="isLoading"
+      (taskSubmitted)="onCreateTask($event)"
+    ></app-task-form>
+
+    @if (errorMessage) {
+    <div class="dw-error-box" role="alert">
+      <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+      <span>{{ errorMessage }}</span>
+    </div>
+    } @if (isLoading) {
+    <div class="dw-state-box" aria-live="polite">
+      <ion-spinner color="primary" name="crescent"></ion-spinner>
+      <p class="dw-text-muted">Cargando tus tareas...</p>
+    </div>
+    } @else if (tasks.length === 0) {
+    <div class="dw-state-box">
+      <ion-icon
+        name="checkmark-done-circle-outline"
+        aria-hidden="true"
+      ></ion-icon>
+      <h2 class="dw-title-section">Sin tareas pendientes</h2>
+      <p class="dw-text-muted">
+        Agrega tu primera tarea arriba para organizar tu día.
+      </p>
+    </div>
+    } @else {
+    <section class="tasks-list" aria-label="Lista de tareas">
+      @for (task of tasks; track task.id) {
+      <app-task-item
+        [task]="task"
+        (toggleRequested)="onToggleTask($event)"
+        (deleteRequested)="onDeleteTask($event)"
+      ></app-task-item>
+      }
+    </section>
+    } }
+  </div>
+</ion-content>

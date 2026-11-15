@@ -1,0 +1,30 @@
+<article
+  class="dw-card dw-border-trabajo task-item"
+  [class.task-item--completed]="task.completed"
+>
+  <div class="task-item__main">
+    <ion-checkbox
+      class="dw-touch-target task-item__checkbox"
+      color="primary"
+      [checked]="task.completed"
+      [attr.aria-label]="'Cambiar estado de ' + task.title"
+      (ionChange)="onToggle()"
+    ></ion-checkbox>
+
+    <span class="task-item__title">{{ task.title }}</span>
+  </div>
+
+  <ion-button
+    fill="clear"
+    color="danger"
+    class="dw-touch-target task-item__delete"
+    [attr.aria-label]="'Eliminar tarea ' + task.title"
+    (click)="onDelete()"
+  >
+    <ion-icon
+      slot="icon-only"
+      name="trash-outline"
+      aria-hidden="true"
+    ></ion-icon>
+  </ion-button>
+</article>
