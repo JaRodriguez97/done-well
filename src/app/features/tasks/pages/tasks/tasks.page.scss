@@ -7,6 +7,24 @@
   margin: 0;
 }
 
+.tasks-page__create-btn {
+  margin: 0;
+}
+
+.tasks-modal__toolbar {
+  --background: var(--dw-surface-dark);
+  --color: var(--ion-text-color);
+}
+
+.tasks-modal__content {
+  --background: var(--ion-background-color);
+}
+
+.tasks-modal__container {
+  margin: 0;
+  width: 100%;
+}
+
 .tasks-summary__content {
   padding: var(--space-3);
 }
@@ -43,6 +61,11 @@
 .tasks-page__state-card {
   margin: 0;
   padding: 0;
+}
+
+.tasks-page__reset-filter {
+  margin-top: var(--space-1);
+  --border-radius: 10px;
 }
 
 .tasks-list {

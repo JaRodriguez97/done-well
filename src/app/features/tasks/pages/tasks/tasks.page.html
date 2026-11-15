@@ -5,8 +5,8 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-grid class="dw-page-container tasks-page__container">
-    @if (viewState$ | async; as state) {
+  @if (viewState$ | async; as state) {
+    <ion-grid class="dw-page-container tasks-page__container">
       <ion-card class="glass-dark tasks-summary" aria-label="Resumen de tareas">
         <ion-card-content class="tasks-summary__content">
           <ion-grid class="ion-no-padding">
@@ -29,13 +29,30 @@
         </ion-card-content>
       </ion-card>
 
-      <app-task-form
-        [categories]="state.categories"
+      <ion-button
+        type="button"
+        expand="block"
+        class="btn-primary tasks-page__create-btn"
         [disabled]="isLoading"
-        (taskSubmitted)="onCreateTask($event)"
-      ></app-task-form>
+        aria-label="Nueva tarea"
+        (click)="openCreateTaskModal()"
+      >
+        <ion-icon
+          slot="start"
+          name="add-circle-outline"
+          aria-hidden="true"
+        ></ion-icon>
+        Nueva tarea
+      </ion-button>
 
-      @if (errorMessage) {
+      <app-task-category-filter
+        [categories]="state.categories"
+        [tasks]="state.tasks"
+        [selectedFilter]="resolveActiveFilter(state.categories)"
+        (filterChanged)="onFilterChange($event)"
+      ></app-task-category-filter>
+
+      @if (errorMessage && !isCreateModalOpen) {
         <ion-item lines="none" class="dw-error-box tasks-page__error" role="alert">
           <ion-icon
             slot="start"
@@ -62,8 +79,27 @@
             ></ion-icon>
             <ion-text class="dw-title-section">Sin tareas pendientes</ion-text>
             <ion-text class="dw-text-muted">
-              Agrega tu primera tarea arriba para organizar tu día.
+              Toca &ldquo;Nueva tarea&rdquo; para organizar tu día.
             </ion-text>
+          </ion-card-content>
+        </ion-card>
+      } @else if (filterTasks(state.tasks, state.categories).length === 0) {
+        <ion-card class="dw-card tasks-page__state-card">
+          <ion-card-content class="dw-state-box">
+            <ion-icon name="filter-outline" aria-hidden="true"></ion-icon>
+            <ion-text class="dw-title-section">Sin tareas para este filtro</ion-text>
+            <ion-text class="dw-text-muted">
+              No hay tareas asociadas a la categoría seleccionada.
+            </ion-text>
+            <ion-button
+              type="button"
+              fill="outline"
+              color="secondary"
+              class="dw-touch-target tasks-page__reset-filter"
+              (click)="onFilterChange('all')"
+            >
+              Ver todas las tareas
+            </ion-button>
           </ion-card-content>
         </ion-card>
       } @else {
@@ -72,7 +108,7 @@
           class="tasks-list"
           aria-label="Lista de tareas"
         >
-          @for (task of state.tasks; track task.id) {
+          @for (task of filterTasks(state.tasks, state.categories); track task.id) {
             <app-task-item
               [task]="task"
               [category]="findCategory(state.categories, task.categoryId)"
@@ -82,6 +118,56 @@
           }
         </ion-list>
       }
-    }
-  </ion-grid>
+    </ion-grid>
+
+    <ion-modal [isOpen]="isCreateModalOpen" (didDismiss)="closeCreateTaskModal()">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar class="tasks-modal__toolbar">
+            <ion-title>Nueva tarea</ion-title>
+            <ion-buttons slot="end">
+              <ion-button
+                type="button"
+                fill="clear"
+                class="dw-touch-target"
+                aria-label="Cerrar modal"
+                (click)="closeCreateTaskModal()"
+              >
+                <ion-icon
+                  slot="icon-only"
+                  name="close-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+
+        <ion-content class="tasks-modal__content">
+          <ion-grid class="dw-page-container tasks-modal__container">
+            @if (errorMessage) {
+              <ion-item
+                lines="none"
+                class="dw-error-box tasks-page__error"
+                role="alert"
+              >
+                <ion-icon
+                  slot="start"
+                  name="alert-circle-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                <ion-text color="danger">{{ errorMessage }}</ion-text>
+              </ion-item>
+            }
+
+            <app-task-form
+              [categories]="state.categories"
+              [disabled]="isLoading"
+              (taskSubmitted)="onCreateTask($event)"
+            ></app-task-form>
+          </ion-grid>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  }
 </ion-content>

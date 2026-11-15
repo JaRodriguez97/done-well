@@ -1,0 +1,78 @@
+<ion-card
+  class="glass-dark task-filter"
+  aria-label="Filtro de tareas por categoría"
+>
+  <ion-card-content class="task-filter__body">
+    <ion-row class="ion-align-items-center task-filter__header">
+      <ion-icon name="filter-outline" aria-hidden="true"></ion-icon>
+      <ion-text class="dw-text-muted task-filter__title">
+        Filtrar por categoría
+      </ion-text>
+    </ion-row>
+
+    <ion-list
+      lines="none"
+      class="task-filter__chips"
+      role="radiogroup"
+      aria-label="Filtrar tareas por categoría"
+    >
+      <ion-chip
+        class="dw-touch-target task-filter__chip"
+        [class.task-filter__chip--selected]="selectedFilter === 'all'"
+        role="radio"
+        tabindex="0"
+        [attr.aria-checked]="selectedFilter === 'all'"
+        aria-label="Filtrar todas las tareas"
+        (click)="selectFilter('all')"
+        (keydown.enter)="selectFilter('all')"
+      >
+        <ion-icon name="apps-outline" aria-hidden="true"></ion-icon>
+        <ion-label>Todas</ion-label>
+        <ion-badge color="medium" class="task-filter__badge">
+          {{ countByFilter("all") }}
+        </ion-badge>
+      </ion-chip>
+
+      <ion-chip
+        class="dw-touch-target task-filter__chip"
+        [class.task-filter__chip--selected]="selectedFilter === 'uncategorized'"
+        role="radio"
+        tabindex="0"
+        [attr.aria-checked]="selectedFilter === 'uncategorized'"
+        aria-label="Filtrar tareas sin categoría"
+        (click)="selectFilter('uncategorized')"
+        (keydown.enter)="selectFilter('uncategorized')"
+      >
+        <ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon>
+        <ion-label>Sin categoría</ion-label>
+        <ion-badge color="medium" class="task-filter__badge">
+          {{ countByFilter("uncategorized") }}
+        </ion-badge>
+      </ion-chip>
+
+      @for (category of categories; track category.id) {
+        <ion-chip
+          class="dw-touch-target task-filter__chip"
+          [class.task-filter__chip--selected]="selectedFilter === category.id"
+          [style.--dw-chip-accent]="'var(--color-' + category.colorKey + ')'"
+          role="radio"
+          tabindex="0"
+          [attr.aria-checked]="selectedFilter === category.id"
+          [attr.aria-label]="'Filtrar por categoría ' + category.name"
+          (click)="selectFilter(category.id)"
+          (keydown.enter)="selectFilter(category.id)"
+        >
+          <ion-icon
+            [name]="category.icon"
+            [style.color]="'var(--color-' + category.colorKey + ')'"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-label>{{ category.name }}</ion-label>
+          <ion-badge color="medium" class="task-filter__badge">
+            {{ countByFilter(category.id) }}
+          </ion-badge>
+        </ion-chip>
+      }
+    </ion-list>
+  </ion-card-content>
+</ion-card>

@@ -86,7 +86,20 @@ describe('TasksPage', () => {
     expect(categoriesServiceSpy.loadCategories).toHaveBeenCalledTimes(1);
   });
 
-  it('should delegate task creation with categoryId to TasksService', async () => {
+  it('should open and close create task modal cleanly', () => {
+    expect(component.isCreateModalOpen).toBeFalse();
+
+    component.errorMessage = 'Error previo';
+    component.openCreateTaskModal();
+    expect(component.isCreateModalOpen).toBeTrue();
+    expect(component.errorMessage).toBeNull();
+
+    component.closeCreateTaskModal();
+    expect(component.isCreateModalOpen).toBeFalse();
+  });
+
+  it('should delegate task creation with categoryId to TasksService and close modal', async () => {
+    component.openCreateTaskModal();
     await component.onCreateTask({
       title: 'Enviar reporte',
       categoryId: 'cat-trabajo',
@@ -97,6 +110,24 @@ describe('TasksPage', () => {
       'cat-trabajo',
     );
     expect(component.errorMessage).toBeNull();
+    expect(component.isCreateModalOpen).toBeFalse();
+  });
+
+  it('should keep create modal open and expose errorMessage when task creation fails', async () => {
+    tasksServiceSpy.addTask.and.rejectWith(
+      new Error('El título de la tarea no puede estar vacío.'),
+    );
+
+    component.openCreateTaskModal();
+    await component.onCreateTask({
+      title: '',
+      categoryId: null,
+    });
+
+    expect(component.isCreateModalOpen).toBeTrue();
+    expect(component.errorMessage).toBe(
+      'El título de la tarea no puede estar vacío.',
+    );
   });
 
   it('should confirm deletion via AlertController before deleting a task', async () => {
@@ -121,5 +152,31 @@ describe('TasksPage', () => {
       sampleCategory,
     );
     expect(component.findCategory([sampleCategory], null)).toBeNull();
+  });
+
+  it('should filter tasks by all, uncategorized, or specific category and fallback when category is removed', () => {
+    const uncategorizedTask: Task = {
+      id: 'task-2',
+      title: 'Comprar café',
+      completed: false,
+      categoryId: null,
+      createdAt: '2025-01-01T00:00:00.000Z',
+    };
+    const tasks = [sampleTask, uncategorizedTask];
+
+    expect(component.filterTasks(tasks, [sampleCategory])).toEqual(tasks);
+
+    component.onFilterChange('uncategorized');
+    expect(component.filterTasks(tasks, [sampleCategory])).toEqual([
+      uncategorizedTask,
+    ]);
+
+    component.onFilterChange('cat-trabajo');
+    expect(component.filterTasks(tasks, [sampleCategory])).toEqual([
+      sampleTask,
+    ]);
+
+    expect(component.resolveActiveFilter([])).toBe('all');
+    expect(component.filterTasks(tasks, [])).toEqual(tasks);
   });
 });

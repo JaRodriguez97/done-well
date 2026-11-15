@@ -2,6 +2,8 @@ import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   AlertController,
+  IonButton,
+  IonButtons,
   IonCard,
   IonCardContent,
   IonCol,
@@ -11,6 +13,7 @@ import {
   IonIcon,
   IonItem,
   IonList,
+  IonModal,
   IonRow,
   IonSpinner,
   IonText,
@@ -18,11 +21,21 @@ import {
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { alertCircleOutline, checkmarkDoneCircleOutline } from 'ionicons/icons';
+import {
+  addCircleOutline,
+  alertCircleOutline,
+  checkmarkDoneCircleOutline,
+  closeOutline,
+  filterOutline,
+} from 'ionicons/icons';
 import { combineLatest } from 'rxjs';
 import { Category } from '../../../../core/models/category.model';
 import { Task, TaskPayload } from '../../../../core/models/task.model';
 import { CategoriesService } from '../../../categories/services/categories.service';
+import {
+  TaskCategoryFilterComponent,
+  TaskFilterValue,
+} from '../../components/task-category-filter/task-category-filter.component';
 import { TaskFormComponent } from '../../components/task-form/task-form.component';
 import { TaskItemComponent } from '../../components/task-item/task-item.component';
 import { TasksService } from '../../services/tasks.service';
@@ -45,10 +58,14 @@ import { TasksService } from '../../services/tasks.service';
     IonCardContent,
     IonList,
     IonItem,
+    IonButton,
+    IonButtons,
+    IonModal,
     IonSpinner,
     IonIcon,
     IonText,
     TaskFormComponent,
+    TaskCategoryFilterComponent,
     TaskItemComponent,
   ],
 })
@@ -60,13 +77,21 @@ export class TasksPage implements OnInit {
 
   isLoading = true;
   errorMessage: string | null = null;
+  selectedFilter: TaskFilterValue = 'all';
+  isCreateModalOpen = false;
 
   constructor(
     private readonly tasksService: TasksService,
     private readonly categoriesService: CategoriesService,
     private readonly alertController: AlertController,
   ) {
-    addIcons({ checkmarkDoneCircleOutline, alertCircleOutline });
+    addIcons({
+      checkmarkDoneCircleOutline,
+      alertCircleOutline,
+      filterOutline,
+      addCircleOutline,
+      closeOutline,
+    });
   }
 
   ngOnInit(): void {
@@ -92,12 +117,28 @@ export class TasksPage implements OnInit {
   }
 
   /**
+   * Abre el modal para registrar una nueva tarea.
+   */
+  openCreateTaskModal(): void {
+    this.errorMessage = null;
+    this.isCreateModalOpen = true;
+  }
+
+  /**
+   * Cierra el modal de creación de tareas.
+   */
+  closeCreateTaskModal(): void {
+    this.isCreateModalOpen = false;
+  }
+
+  /**
    * Crea una nueva tarea con su título y categoría asignada.
    */
   async onCreateTask(payload: TaskPayload): Promise<void> {
     this.errorMessage = null;
     try {
       await this.tasksService.addTask(payload.title, payload.categoryId);
+      this.closeCreateTaskModal();
     } catch (error) {
       this.errorMessage =
         error instanceof Error ? error.message : 'No se pudo guardar la tarea.';
@@ -143,6 +184,40 @@ export class TasksPage implements OnInit {
     } catch {
       this.errorMessage = 'No se pudo eliminar la tarea.';
     }
+  }
+
+  /**
+   * Actualiza el filtro de categoría activo en la vista de tareas.
+   */
+  onFilterChange(filter: TaskFilterValue): void {
+    this.selectedFilter = filter;
+  }
+
+  /**
+   * Restablece el filtro a todas las tareas si la categoría filtrada fue eliminada.
+   */
+  resolveActiveFilter(categories: Category[]): TaskFilterValue {
+    if (this.selectedFilter === 'all' || this.selectedFilter === 'uncategorized') {
+      return this.selectedFilter;
+    }
+    const categoryExists = categories.some(
+      (category) => category.id === this.selectedFilter,
+    );
+    return categoryExists ? this.selectedFilter : 'all';
+  }
+
+  /**
+   * Retorna las tareas visibles según el filtro de categoría seleccionado.
+   */
+  filterTasks(tasks: Task[], categories: Category[]): Task[] {
+    const activeFilter = this.resolveActiveFilter(categories);
+    if (activeFilter === 'all') {
+      return tasks;
+    }
+    if (activeFilter === 'uncategorized') {
+      return tasks.filter((task) => task.categoryId === null);
+    }
+    return tasks.filter((task) => task.categoryId === activeFilter);
   }
 
   findCategory(categories: Category[], categoryId: string | null): Category | null {
