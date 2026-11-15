@@ -1,0 +1,130 @@
+.stats-page__container {
+  margin: 0;
+  width: 100%;
+}
+
+.stats-page__error {
+  --background: var(--dw-surface-dark);
+  --inner-padding-end: 0;
+  --padding-start: var(--space-3);
+  --padding-end: var(--space-3);
+}
+
+.stats-page__state-card {
+  margin: 0;
+  padding: 0;
+}
+
+.stats-overview {
+  margin: 0;
+}
+
+.stats-overview__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.stats-overview__grid {
+  width: 100%;
+  margin: 0;
+}
+
+.stats-overview__top {
+  width: 100%;
+}
+
+.stats-overview__percent {
+  font-size: var(--font-size-section);
+  font-weight: 700;
+  color: var(--ion-color-secondary);
+}
+
+.stats-overview__bar {
+  height: 8px;
+  border-radius: 999px;
+  --background: rgba(255, 255, 255, 0.12);
+}
+
+.stats-overview__metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+}
+
+.stats-overview__metric--bordered {
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.stats-overview__value {
+  font-size: var(--font-size-section);
+  font-weight: 600;
+  color: var(--ion-text-color);
+  line-height: 1.2;
+}
+
+.stats-overview__value--accent {
+  color: var(--ion-color-secondary);
+}
+
+.stats-page__section-title {
+  padding: var(--space-1) 0 0;
+  font-weight: 500;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: transparent;
+  padding: 0;
+}
+
+.stats-category-card {
+  margin: 0;
+  padding: 0;
+  --background: var(--dw-surface-dark);
+}
+
+.stats-category-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+}
+
+.stats-category-card__row {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --min-height: 44px;
+}
+
+.stats-category-card__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stats-category-card__name {
+  font-size: var(--font-size-body);
+  font-weight: 500;
+  color: var(--ion-text-color);
+}
+
+.stats-category-card__badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: var(--space-1) var(--space-2);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.stats-category-card__bar {
+  height: 6px;
+  border-radius: 999px;
+  --background: rgba(255, 255, 255, 0.12);
+}

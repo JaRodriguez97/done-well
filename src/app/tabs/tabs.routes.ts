@@ -10,7 +10,9 @@ export const routes: Routes = [
       {
         path: 'tab1',
         loadComponent: () =>
-          import('../features/tasks/pages/tasks/tasks.page').then((m) => m.TasksPage),
+          import('../features/tasks/pages/tasks/tasks.page').then(
+            (m) => m.TasksPage,
+          ),
       },
       {
         path: 'tab2',
@@ -21,7 +23,10 @@ export const routes: Routes = [
       },
       {
         path: 'tab3',
-        loadComponent: () => import('../tab3/tab3.page').then((m) => m.Tab3Page),
+        loadComponent: () =>
+          import('../features/stats/pages/stats/stats.page').then(
+            (m) => m.StatsPage,
+          ),
       },
       {
         path: '',

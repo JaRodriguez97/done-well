@@ -1,0 +1,161 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>DoneWell · Estadísticas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        type="button"
+        fill="clear"
+        color="secondary"
+        class="dw-touch-target"
+        [disabled]="isSyncing"
+        aria-label="Sincronizar configuración remota"
+        (click)="onRefreshRemoteConfig()"
+      >
+        <ion-icon
+          slot="icon-only"
+          name="sync-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid class="dw-page-container stats-page__container">
+    @if (errorMessage) {
+    <ion-item lines="none" class="dw-error-box stats-page__error" role="alert">
+      <ion-icon
+        slot="start"
+        name="alert-circle-outline"
+        aria-hidden="true"
+      ></ion-icon>
+      <ion-text color="danger">{{ errorMessage }}</ion-text>
+    </ion-item>
+    } @if (isLoading) {
+    <ion-card class="dw-card stats-page__state-card">
+      <ion-card-content class="dw-state-box" aria-live="polite">
+        <ion-spinner color="primary" name="crescent"></ion-spinner>
+        <ion-text class="dw-text-muted">Calculando estadísticas...</ion-text>
+      </ion-card-content>
+    </ion-card>
+    } @else { @if (viewState$ | async; as state) { @if
+    (buildStatsOverview(state.tasks, state.categories); as overview) {
+    <ion-card class="glass-dark stats-overview" aria-label="Progreso general">
+      <ion-card-content class="stats-overview__content">
+        <ion-row
+          class="ion-align-items-center ion-justify-content-between stats-overview__top"
+        >
+          <ion-text class="dw-title-section">Progreso general</ion-text>
+          <ion-text color="secondary" class="stats-overview__percent">
+            {{ overview.completionPercent }}%
+          </ion-text>
+        </ion-row>
+
+        <ion-progress-bar
+          class="stats-overview__bar"
+          [value]="overview.completionRatio"
+          color="primary"
+          [attr.aria-label]="'Progreso completado ' + overview.completionPercent + '%'"
+        ></ion-progress-bar>
+
+        <ion-grid class="ion-no-padding stats-overview__grid">
+          <ion-row class="ion-align-items-center">
+            <ion-col
+              size="4"
+              class="stats-overview__metric stats-overview__metric--bordered"
+            >
+              <ion-text class="stats-overview__value">
+                {{ overview.totalTasks }}
+              </ion-text>
+              <ion-text class="dw-text-muted">Total</ion-text>
+            </ion-col>
+
+            <ion-col
+              size="4"
+              class="stats-overview__metric stats-overview__metric--bordered"
+            >
+              <ion-text
+                color="secondary"
+                class="stats-overview__value stats-overview__value--accent"
+              >
+                {{ overview.completedTasks }}
+              </ion-text>
+              <ion-text class="dw-text-muted">Hechas</ion-text>
+            </ion-col>
+
+            <ion-col size="4" class="stats-overview__metric">
+              <ion-text class="stats-overview__value">
+                {{ overview.pendingTasks }}
+              </ion-text>
+              <ion-text class="dw-text-muted">Pendientes</ion-text>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    @if (overview.totalTasks === 0) {
+    <ion-card class="dw-card stats-page__state-card">
+      <ion-card-content class="dw-state-box">
+        <ion-icon name="stats-chart-outline" aria-hidden="true"></ion-icon>
+        <ion-text class="dw-title-section">Sin datos para mostrar</ion-text>
+        <ion-text class="dw-text-muted">
+          Agrega tareas para visualizar el avance por categoría.
+        </ion-text>
+      </ion-card-content>
+    </ion-card>
+    } @else {
+    <ion-text class="dw-text-muted stats-page__section-title">
+      Rendimiento por categoría
+    </ion-text>
+
+    <ion-list
+      lines="none"
+      class="stats-list"
+      aria-label="Estadísticas por categoría"
+    >
+      @for (item of overview.categoryStats; track item.id) {
+      <ion-card
+        [class]="'dw-card stats-category-card dw-border-' + item.colorKey"
+      >
+        <ion-card-content class="stats-category-card__content">
+          <ion-item lines="none" class="stats-category-card__row">
+            <ion-icon
+              slot="start"
+              [name]="item.icon"
+              [style.color]="'var(--color-' + item.colorKey + ')'"
+              aria-hidden="true"
+            ></ion-icon>
+
+            <ion-label class="stats-category-card__label">
+              <ion-text class="stats-category-card__name">
+                {{ item.name }}
+              </ion-text>
+              <ion-text class="dw-text-muted">
+                {{ item.completed }} / {{ item.total }} completadas
+              </ion-text>
+            </ion-label>
+
+            <ion-badge
+              slot="end"
+              color="medium"
+              class="stats-category-card__badge"
+            >
+              {{ item.completionPercent }}%
+            </ion-badge>
+          </ion-item>
+
+          <ion-progress-bar
+            class="stats-category-card__bar"
+            [value]="item.completionRatio"
+            [style.--progress-background]="'var(--color-' + item.colorKey + ')'"
+            [attr.aria-label]="'Avance en ' + item.name + ' ' + item.completionPercent + '%'"
+          ></ion-progress-bar>
+        </ion-card-content>
+      </ion-card>
+      }
+    </ion-list>
+    } } } }
+  </ion-grid>
+</ion-content>
