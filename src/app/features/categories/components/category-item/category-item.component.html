@@ -1,0 +1,47 @@
+<ion-card class="dw-card category-item" [ngClass]="borderClass">
+  <ion-item lines="none" class="category-item__row">
+    <ion-icon
+      slot="start"
+      [name]="category.icon"
+      [style.color]="'var(--color-' + category.colorKey + ')'"
+      aria-hidden="true"
+    ></ion-icon>
+
+    <ion-label class="category-item__label">
+      <ion-text class="category-item__name">{{ category.name }}</ion-text>
+      <ion-badge color="medium" class="category-item__badge">
+        {{ taskCount }} {{ taskCount === 1 ? 'tarea' : 'tareas' }}
+      </ion-badge>
+    </ion-label>
+
+    <ion-buttons slot="end">
+      <ion-button
+        fill="clear"
+        color="secondary"
+        class="dw-touch-target"
+        [attr.aria-label]="'Editar categoría ' + category.name"
+        (click)="onEdit()"
+      >
+        <ion-icon
+          slot="icon-only"
+          name="create-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </ion-button>
+
+      <ion-button
+        fill="clear"
+        color="danger"
+        class="dw-touch-target"
+        [attr.aria-label]="'Eliminar categoría ' + category.name"
+        (click)="onDelete()"
+      >
+        <ion-icon
+          slot="icon-only"
+          name="trash-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-item>
+</ion-card>

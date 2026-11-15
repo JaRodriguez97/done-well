@@ -1,9 +1,10 @@
-<article
-  class="dw-card dw-border-trabajo task-item"
-  [class.task-item--completed]="task.completed"
+<ion-card
+  class="dw-card task-item"
+  [ngClass]="[borderClass, task.completed ? 'task-item--completed' : '']"
 >
-  <div class="task-item__main">
+  <ion-item lines="none" class="task-item__row">
     <ion-checkbox
+      slot="start"
       class="dw-touch-target task-item__checkbox"
       color="primary"
       [checked]="task.completed"
@@ -11,20 +12,42 @@
       (ionChange)="onToggle()"
     ></ion-checkbox>
 
-    <span class="task-item__title">{{ task.title }}</span>
-  </div>
+    <ion-label class="ion-text-wrap task-item__content">
+      <ion-text class="task-item__title">{{ task.title }}</ion-text>
 
-  <ion-button
-    fill="clear"
-    color="danger"
-    class="dw-touch-target task-item__delete"
-    [attr.aria-label]="'Eliminar tarea ' + task.title"
-    (click)="onDelete()"
-  >
-    <ion-icon
-      slot="icon-only"
-      name="trash-outline"
-      aria-hidden="true"
-    ></ion-icon>
-  </ion-button>
-</article>
+      @if (category) {
+        <ion-chip
+          class="task-item__chip"
+          [style.border-color]="'var(--color-' + category.colorKey + ')'"
+        >
+          <ion-icon
+            [name]="category.icon"
+            [style.color]="'var(--color-' + category.colorKey + ')'"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-label class="task-item__chip-label">{{ category.name }}</ion-label>
+        </ion-chip>
+      } @else {
+        <ion-chip class="task-item__chip task-item__chip--empty">
+          <ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon>
+          <ion-label class="task-item__chip-label">Sin categoría</ion-label>
+        </ion-chip>
+      }
+    </ion-label>
+
+    <ion-button
+      slot="end"
+      fill="clear"
+      color="danger"
+      class="dw-touch-target task-item__delete"
+      [attr.aria-label]="'Eliminar tarea ' + task.title"
+      (click)="onDelete()"
+    >
+      <ion-icon
+        slot="icon-only"
+        name="trash-outline"
+        aria-hidden="true"
+      ></ion-icon>
+    </ion-button>
+  </ion-item>
+</ion-card>

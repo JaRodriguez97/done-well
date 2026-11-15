@@ -8,10 +8,18 @@ export type CategoryColorKey =
   | 'urgente'
   | 'otros';
 
-export interface Category extends IdentifiableEntity {
+export interface CategoryPayload {
   name: string;
   colorKey: CategoryColorKey;
+  icon?: string;
+}
+
+export interface Category extends IdentifiableEntity, CategoryPayload {
   icon: string;
+}
+
+export interface CreateCategoryParams extends Partial<Category> {
+  name: string;
 }
 
 export class CategoryItem extends BaseEntity<Category> implements Category {
@@ -21,13 +29,7 @@ export class CategoryItem extends BaseEntity<Category> implements Category {
   colorKey: CategoryColorKey;
   icon: string;
 
-  constructor(params: {
-    id?: string;
-    name: string;
-    colorKey?: CategoryColorKey;
-    icon?: string;
-    createdAt?: string;
-  }) {
+  constructor(params: CreateCategoryParams) {
     super(params.id, params.createdAt);
     this._name = BaseEntity.validateRequiredText(params.name, CategoryItem.EMPTY_NAME_ERROR);
     this.colorKey = params.colorKey ?? 'otros';
@@ -45,7 +47,7 @@ export class CategoryItem extends BaseEntity<Category> implements Category {
   /**
    * Actualiza las propiedades editables de la categoría.
    */
-  update(changes: { name?: string; colorKey?: CategoryColorKey; icon?: string }): void {
+  update(changes: Partial<CategoryPayload>): void {
     if (changes.name !== undefined) {
       this.name = changes.name;
     }

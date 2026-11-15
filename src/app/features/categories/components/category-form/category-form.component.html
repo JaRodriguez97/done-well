@@ -1,0 +1,171 @@
+<ion-card class="dw-card category-form">
+  <ion-card-content class="category-form__body">
+    <ion-grid class="ion-no-padding category-form__form">
+      <ion-item lines="none" class="category-form__input-item">
+        <ion-input
+          class="category-form__input"
+          type="text"
+          [formControl]="nameControl"
+          [placeholder]="
+            isEditMode
+              ? 'Editar nombre de categoría'
+              : 'Nueva categoría (ej. Salud)'
+          "
+          aria-label="Nombre de la categoría"
+          maxlength="40"
+          (ionInput)="clearValidationError()"
+          (keyup.enter)="onSubmit()"
+        ></ion-input>
+      </ion-item>
+
+      <ion-text class="dw-text-muted category-form__section-label">
+        Color
+      </ion-text>
+
+      <ion-list
+        lines="none"
+        class="category-form__chips"
+        role="radiogroup"
+        aria-label="Color de la categoría"
+      >
+        @for (option of colorOptions; track option.key) {
+          <ion-chip
+            class="dw-touch-target category-form__chip"
+            [class.category-form__chip--selected]="
+              selectedColorKey === option.key
+            "
+            [style.--dw-chip-accent]="option.cssVar"
+            role="radio"
+            tabindex="0"
+            [attr.aria-checked]="selectedColorKey === option.key"
+            [attr.aria-label]="'Color ' + option.label"
+            (click)="selectColor(option.key)"
+            (keydown.enter)="selectColor(option.key)"
+          >
+            <ion-icon
+              name="ellipse"
+              [style.color]="option.cssVar"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-label>{{ option.label }}</ion-label>
+          </ion-chip>
+        }
+      </ion-list>
+
+      <ion-text class="dw-text-muted category-form__section-label">
+        Ícono
+      </ion-text>
+
+      <ion-list
+        lines="none"
+        class="category-form__chips"
+        role="radiogroup"
+        aria-label="Ícono de la categoría"
+      >
+        @for (iconOption of visibleIconOptions; track iconOption.name) {
+          <ion-chip
+            class="dw-touch-target category-form__chip category-form__icon-chip"
+            [class.category-form__chip--selected]="
+              selectedIcon === iconOption.name
+            "
+            [style.--dw-chip-accent]="'var(--color-' + selectedColorKey + ')'"
+            role="radio"
+            tabindex="0"
+            [attr.aria-checked]="selectedIcon === iconOption.name"
+            [attr.aria-label]="'Ícono ' + iconOption.label"
+            (click)="selectIcon(iconOption.name)"
+            (keydown.enter)="selectIcon(iconOption.name)"
+          >
+            <ion-icon
+              [name]="iconOption.name"
+              [style.color]="'var(--color-' + selectedColorKey + ')'"
+              aria-hidden="true"
+            ></ion-icon>
+          </ion-chip>
+        }
+
+        <ion-chip
+          class="dw-touch-target category-form__chip category-form__toggle-chip"
+          role="button"
+          tabindex="0"
+          [attr.aria-expanded]="showAllIcons"
+          [attr.aria-label]="
+            showAllIcons ? 'Mostrar menos íconos' : 'Mostrar más íconos'
+          "
+          (click)="toggleShowAllIcons()"
+          (keydown.enter)="toggleShowAllIcons()"
+        >
+          <ion-icon
+            [name]="showAllIcons ? 'chevron-up-outline' : 'chevron-down-outline'"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-label>
+            {{
+              showAllIcons
+                ? 'Ver menos'
+                : 'Más íconos (' + iconOptions.length + ')'
+            }}
+          </ion-label>
+        </ion-chip>
+      </ion-list>
+
+      @if (validationError) {
+        <ion-item
+          lines="none"
+          class="dw-error-box category-form__error"
+          role="alert"
+        >
+          <ion-icon
+            slot="start"
+            name="alert-circle-outline"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-text color="danger">{{ validationError }}</ion-text>
+        </ion-item>
+      }
+
+      <ion-grid class="ion-no-padding category-form__actions">
+        <ion-row class="ion-align-items-center">
+          <ion-col [size]="isEditMode ? '7' : '12'">
+            <ion-button
+              type="button"
+              expand="block"
+              class="btn-primary category-form__submit"
+              [disabled]="disabled"
+              (click)="onSubmit()"
+            >
+              <ion-icon
+                slot="start"
+                [name]="
+                  isEditMode ? 'checkmark-circle-outline' : 'add-circle-outline'
+                "
+                aria-hidden="true"
+              ></ion-icon>
+              {{ isEditMode ? 'Guardar cambios' : 'Agregar categoría' }}
+            </ion-button>
+          </ion-col>
+
+          @if (isEditMode) {
+            <ion-col size="5">
+              <ion-button
+                type="button"
+                expand="block"
+                fill="outline"
+                color="secondary"
+                class="dw-touch-target category-form__cancel"
+                (click)="onCancelEdit()"
+              >
+                <ion-icon
+                  slot="start"
+                  name="close-circle-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                Cancelar
+              </ion-button>
+            </ion-col>
+          }
+        </ion-row>
+      </ion-grid>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

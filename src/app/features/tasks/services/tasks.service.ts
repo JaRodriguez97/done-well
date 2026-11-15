@@ -55,6 +55,38 @@ export class TasksService {
     await this.persistTasks(updatedTasks);
   }
 
+  /**
+   * Desasigna la categoría indicada en las tareas afectadas conservando sus datos.
+   */
+  async clearCategoryFromTasks(categoryId: string): Promise<void> {
+    let hasChanges = false;
+    const updatedTasks = this.tasksSubject.value.map((task) => {
+      if (task.categoryId !== categoryId) {
+        return task;
+      }
+      hasChanges = true;
+      const entity = new TaskItem(task);
+      entity.assignCategory(null);
+      return entity.toPlainObject();
+    });
+
+    if (hasChanges) {
+      await this.persistTasks(updatedTasks);
+    }
+  }
+
+  /**
+   * Elimina todas las tareas vinculadas a una categoría específica.
+   */
+  async deleteTasksByCategory(categoryId: string): Promise<void> {
+    const currentTasks = this.tasksSubject.value;
+    const updatedTasks = currentTasks.filter((task) => task.categoryId !== categoryId);
+
+    if (updatedTasks.length !== currentTasks.length) {
+      await this.persistTasks(updatedTasks);
+    }
+  }
+
   private async persistTasks(tasks: Task[]): Promise<void> {
     await this.storageService.set(STORAGE_KEYS.TASKS, tasks);
     this.tasksSubject.next(tasks);

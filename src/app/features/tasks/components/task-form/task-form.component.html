@@ -1,34 +1,93 @@
-<form class="dw-card task-form" (ngSubmit)="onSubmit()" novalidate>
-  <div class="task-form__row">
-    <ion-input
-      class="task-form__input"
-      type="text"
-      [formControl]="titleControl"
-      placeholder="¿Qué necesitas hacer hoy?"
-      aria-label="Título de la nueva tarea"
-      maxlength="120"
-      (ionInput)="clearValidationError()"
-    ></ion-input>
+<ion-card class="dw-card task-form">
+  <ion-card-content class="task-form__body">
+    <ion-grid class="ion-no-padding task-form__form">
+      <ion-item lines="none" class="task-form__field">
+        <ion-input
+          class="task-form__input"
+          type="text"
+          [formControl]="titleControl"
+          placeholder="¿Qué necesitas hacer hoy?"
+          aria-label="Título de la nueva tarea"
+          maxlength="120"
+          (ionInput)="clearValidationError()"
+          (keyup.enter)="onSubmit()"
+        ></ion-input>
+      </ion-item>
 
-    <ion-button
-      type="submit"
-      class="btn-primary task-form__submit"
-      [disabled]="disabled"
-      aria-label="Agregar tarea"
-    >
-      <ion-icon
-        slot="start"
-        name="add-circle-outline"
-        aria-hidden="true"
-      ></ion-icon>
-      Agregar
-    </ion-button>
-  </div>
+      <ion-text class="dw-text-muted task-form__section-label">
+        Categoría
+      </ion-text>
 
-  @if (validationError) {
-    <div class="dw-error-box" role="alert">
-      <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
-      <span>{{ validationError }}</span>
-    </div>
-  }
-</form>
+      <ion-list
+        lines="none"
+        class="task-form__chips"
+        role="radiogroup"
+        aria-label="Categoría de la tarea"
+      >
+        <ion-chip
+          class="dw-touch-target task-form__chip"
+          [class.task-form__chip--selected]="categoryControl.value === null"
+          role="radio"
+          tabindex="0"
+          [attr.aria-checked]="categoryControl.value === null"
+          aria-label="Sin categoría"
+          (click)="selectCategory(null)"
+          (keydown.enter)="selectCategory(null)"
+        >
+          <ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon>
+          <ion-label>Sin categoría</ion-label>
+        </ion-chip>
+
+        @for (category of categories; track category.id) {
+          <ion-chip
+            class="dw-touch-target task-form__chip"
+            [class.task-form__chip--selected]="
+              categoryControl.value === category.id
+            "
+            [style.--dw-chip-accent]="'var(--color-' + category.colorKey + ')'"
+            role="radio"
+            tabindex="0"
+            [attr.aria-checked]="categoryControl.value === category.id"
+            [attr.aria-label]="'Categoría ' + category.name"
+            (click)="selectCategory(category.id)"
+            (keydown.enter)="selectCategory(category.id)"
+          >
+            <ion-icon
+              [name]="category.icon"
+              [style.color]="'var(--color-' + category.colorKey + ')'"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-label>{{ category.name }}</ion-label>
+          </ion-chip>
+        }
+      </ion-list>
+
+      @if (validationError) {
+        <ion-item lines="none" class="dw-error-box task-form__error" role="alert">
+          <ion-icon
+            slot="start"
+            name="alert-circle-outline"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-text color="danger">{{ validationError }}</ion-text>
+        </ion-item>
+      }
+
+      <ion-button
+        type="button"
+        expand="block"
+        class="btn-primary task-form__submit"
+        [disabled]="disabled"
+        aria-label="Agregar tarea"
+        (click)="onSubmit()"
+      >
+        <ion-icon
+          slot="start"
+          name="add-circle-outline"
+          aria-hidden="true"
+        ></ion-icon>
+        Agregar
+      </ion-button>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

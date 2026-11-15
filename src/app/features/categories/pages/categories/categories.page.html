@@ -1,0 +1,134 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>DoneWell · Categorías</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid class="dw-page-container categories-page__container">
+    @if (viewState$ | async; as state) {
+      <ion-card class="glass-dark categories-summary" aria-label="Resumen de categorías">
+        <ion-card-content class="categories-summary__content">
+          <ion-text class="dw-text-muted">Categorías activas</ion-text>
+          <ion-text color="secondary" class="categories-summary__count">
+            {{ state.categories.length }}
+          </ion-text>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-button
+        type="button"
+        expand="block"
+        class="btn-primary categories-page__create-btn"
+        [disabled]="isLoading"
+        aria-label="Nueva categoría"
+        (click)="openCreateModal()"
+      >
+        <ion-icon
+          slot="start"
+          name="add-circle-outline"
+          aria-hidden="true"
+        ></ion-icon>
+        Nueva categoría
+      </ion-button>
+
+      @if (errorMessage && !isFormModalOpen) {
+        <ion-item lines="none" class="dw-error-box categories-page__error" role="alert">
+          <ion-icon
+            slot="start"
+            name="alert-circle-outline"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-text color="danger">{{ errorMessage }}</ion-text>
+        </ion-item>
+      }
+
+      @if (isLoading) {
+        <ion-card class="dw-card categories-page__state-card">
+          <ion-card-content class="dw-state-box" aria-live="polite">
+            <ion-spinner color="primary" name="crescent"></ion-spinner>
+            <ion-text class="dw-text-muted">Cargando categorías...</ion-text>
+          </ion-card-content>
+        </ion-card>
+      } @else if (state.categories.length === 0) {
+        <ion-card class="dw-card categories-page__state-card">
+          <ion-card-content class="dw-state-box">
+            <ion-icon name="pricetags-outline" aria-hidden="true"></ion-icon>
+            <ion-text class="dw-title-section">Sin categorías registradas</ion-text>
+            <ion-text class="dw-text-muted">
+              Toca &ldquo;Nueva categoría&rdquo; para organizar tus tareas.
+            </ion-text>
+          </ion-card-content>
+        </ion-card>
+      } @else {
+        <ion-list
+          lines="none"
+          class="categories-list"
+          aria-label="Lista de categorías"
+        >
+          @for (category of state.categories; track category.id) {
+            <app-category-item
+              [category]="category"
+              [taskCount]="countTasksByCategory(state.tasks, category.id)"
+              (editRequested)="onStartEdit($event)"
+              (deleteRequested)="confirmDeleteCategory($event, state.tasks)"
+            ></app-category-item>
+          }
+        </ion-list>
+      }
+    }
+  </ion-grid>
+
+  <ion-modal [isOpen]="isFormModalOpen" (didDismiss)="onCloseFormModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar class="categories-modal__toolbar">
+          <ion-title>
+            {{ editingCategory ? 'Editar categoría' : 'Nueva categoría' }}
+          </ion-title>
+          <ion-buttons slot="end">
+            <ion-button
+              type="button"
+              fill="clear"
+              class="dw-touch-target"
+              aria-label="Cerrar modal"
+              (click)="onCloseFormModal()"
+            >
+              <ion-icon
+                slot="icon-only"
+                name="close-outline"
+                aria-hidden="true"
+              ></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="categories-modal__content">
+        <ion-grid class="dw-page-container categories-modal__container">
+          @if (errorMessage) {
+            <ion-item
+              lines="none"
+              class="dw-error-box categories-page__error"
+              role="alert"
+            >
+              <ion-icon
+                slot="start"
+                name="alert-circle-outline"
+                aria-hidden="true"
+              ></ion-icon>
+              <ion-text color="danger">{{ errorMessage }}</ion-text>
+            </ion-item>
+          }
+
+          <app-category-form
+            [editingCategory]="editingCategory"
+            [disabled]="isLoading"
+            (categorySaved)="onSaveCategory($event)"
+            (editCancelled)="onCancelEdit()"
+          ></app-category-form>
+        </ion-grid>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

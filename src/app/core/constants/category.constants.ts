@@ -1,57 +1,138 @@
+import {
+  airplaneOutline,
+  bookOutline,
+  briefcaseOutline,
+  cafeOutline,
+  calendarOutline,
+  carOutline,
+  cartOutline,
+  cashOutline,
+  codeSlashOutline,
+  constructOutline,
+  fitnessOutline,
+  flameOutline,
+  gameControllerOutline,
+  giftOutline,
+  homeOutline,
+  laptopOutline,
+  medkitOutline,
+  musicalNotesOutline,
+  pawOutline,
+  personOutline,
+  pricetagOutline,
+  restaurantOutline,
+  schoolOutline,
+  walletOutline,
+} from 'ionicons/icons';
 import { Category, CategoryColorKey } from '../models/category.model';
+
+export const DEFAULT_CATEGORY_ICON = 'pricetag-outline';
 
 export interface CategoryColorOption {
   readonly key: CategoryColorKey;
   readonly label: string;
   readonly cssVar: string;
   readonly hex: string;
-  readonly defaultIcon: string;
+}
+
+export interface CategoryIconOption {
+  readonly name: string;
+  readonly label: string;
+  readonly featured?: boolean;
 }
 
 export const CATEGORY_COLOR_OPTIONS: readonly CategoryColorOption[] = [
   {
     key: 'trabajo',
-    label: 'Trabajo',
+    label: 'Violeta',
     cssVar: 'var(--color-trabajo)',
     hex: '#7567F8',
-    defaultIcon: 'briefcase-outline',
   },
   {
     key: 'personal',
-    label: 'Personal',
+    label: 'Turquesa',
     cssVar: 'var(--color-personal)',
     hex: '#40E0D0',
-    defaultIcon: 'person-outline',
   },
   {
     key: 'estudios',
-    label: 'Estudios',
+    label: 'Azul',
     cssVar: 'var(--color-estudios)',
     hex: '#6798FF',
-    defaultIcon: 'school-outline',
   },
   {
     key: 'compras',
-    label: 'Compras',
+    label: 'Ámbar',
     cssVar: 'var(--color-compras)',
     hex: '#FFCC00',
-    defaultIcon: 'cart-outline',
   },
   {
     key: 'urgente',
-    label: 'Urgente',
+    label: 'Coral',
     cssVar: 'var(--color-urgente)',
     hex: '#FF7660',
-    defaultIcon: 'flame-outline',
   },
   {
     key: 'otros',
-    label: 'Otros',
+    label: 'Pizarra',
     cssVar: 'var(--color-otros)',
     hex: '#667499',
-    defaultIcon: 'pricetag-outline',
   },
 ];
+
+export const CATEGORY_ICON_OPTIONS: readonly CategoryIconOption[] = [
+  { name: 'pricetag-outline', label: 'Etiqueta', featured: true },
+  { name: 'briefcase-outline', label: 'Trabajo', featured: true },
+  { name: 'person-outline', label: 'Personal', featured: true },
+  { name: 'school-outline', label: 'Estudios', featured: true },
+  { name: 'cart-outline', label: 'Compras', featured: true },
+  { name: 'flame-outline', label: 'Urgente', featured: true },
+  { name: 'home-outline', label: 'Hogar' },
+  { name: 'fitness-outline', label: 'Ejercicio' },
+  { name: 'medkit-outline', label: 'Salud' },
+  { name: 'wallet-outline', label: 'Finanzas' },
+  { name: 'cash-outline', label: 'Pagos' },
+  { name: 'airplane-outline', label: 'Viajes' },
+  { name: 'car-outline', label: 'Vehículo' },
+  { name: 'restaurant-outline', label: 'Comida' },
+  { name: 'cafe-outline', label: 'Café' },
+  { name: 'book-outline', label: 'Lectura' },
+  { name: 'laptop-outline', label: 'Equipo' },
+  { name: 'code-slash-outline', label: 'Código' },
+  { name: 'musical-notes-outline', label: 'Música' },
+  { name: 'game-controller-outline', label: 'Ocio' },
+  { name: 'paw-outline', label: 'Mascotas' },
+  { name: 'gift-outline', label: 'Regalos' },
+  { name: 'calendar-outline', label: 'Eventos' },
+  { name: 'construct-outline', label: 'Soporte' },
+];
+
+export const CATEGORY_ICON_REGISTRY = {
+  briefcaseOutline,
+  personOutline,
+  schoolOutline,
+  cartOutline,
+  flameOutline,
+  pricetagOutline,
+  homeOutline,
+  fitnessOutline,
+  medkitOutline,
+  walletOutline,
+  cashOutline,
+  airplaneOutline,
+  carOutline,
+  restaurantOutline,
+  cafeOutline,
+  bookOutline,
+  laptopOutline,
+  codeSlashOutline,
+  musicalNotesOutline,
+  gameControllerOutline,
+  pawOutline,
+  giftOutline,
+  calendarOutline,
+  constructOutline,
+};
 
 /**
  * Categorías iniciales cargadas cuando aún no existen datos guardados.

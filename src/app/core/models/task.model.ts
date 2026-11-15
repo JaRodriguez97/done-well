@@ -1,9 +1,16 @@
 import { BaseEntity, IdentifiableEntity } from './base-entity.model';
 
-export interface Task extends IdentifiableEntity {
+export interface TaskPayload {
   title: string;
-  completed: boolean;
   categoryId: string | null;
+}
+
+export interface Task extends IdentifiableEntity, TaskPayload {
+  completed: boolean;
+}
+
+export interface CreateTaskParams extends Partial<Task> {
+  title: string;
 }
 
 export class TaskItem extends BaseEntity<Task> implements Task {
@@ -13,13 +20,7 @@ export class TaskItem extends BaseEntity<Task> implements Task {
   completed: boolean;
   categoryId: string | null;
 
-  constructor(params: {
-    id?: string;
-    title: string;
-    completed?: boolean;
-    categoryId?: string | null;
-    createdAt?: string;
-  }) {
+  constructor(params: CreateTaskParams) {
     super(params.id, params.createdAt);
     this._title = BaseEntity.validateRequiredText(params.title, TaskItem.EMPTY_TITLE_ERROR);
     this.completed = params.completed ?? false;

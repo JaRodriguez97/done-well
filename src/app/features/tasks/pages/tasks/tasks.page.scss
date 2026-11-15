@@ -1,7 +1,13 @@
+.tasks-page__container {
+  margin: 0;
+  width: 100%;
+}
+
 .tasks-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+  margin: 0;
+}
+
+.tasks-summary__content {
   padding: var(--space-3);
 }
 
@@ -10,6 +16,10 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-1);
+}
+
+.tasks-summary__metric--bordered {
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .tasks-summary__value {
@@ -23,14 +33,22 @@
   color: var(--ion-color-secondary);
 }
 
-.tasks-summary__divider {
-  width: 1px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.14);
+.tasks-page__error {
+  --background: var(--dw-surface-dark);
+  --inner-padding-end: 0;
+  --padding-start: var(--space-3);
+  --padding-end: var(--space-3);
+}
+
+.tasks-page__state-card {
+  margin: 0;
+  padding: 0;
 }
 
 .tasks-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  background: transparent;
+  padding: 0;
 }

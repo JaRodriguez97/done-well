@@ -5,58 +5,83 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div class="dw-page-container">
-    @if (tasks$ | async; as tasks) {
-    <section class="glass-dark tasks-summary" aria-label="Resumen de tareas">
-      <div class="tasks-summary__metric">
-        <span class="tasks-summary__value">{{ countPending(tasks) }}</span>
-        <span class="dw-text-muted">Pendientes</span>
-      </div>
-      <div class="tasks-summary__divider" aria-hidden="true"></div>
-      <div class="tasks-summary__metric">
-        <span class="tasks-summary__value tasks-summary__value--accent">
-          {{ countCompleted(tasks) }}
-        </span>
-        <span class="dw-text-muted">Completadas</span>
-      </div>
-    </section>
+  <ion-grid class="dw-page-container tasks-page__container">
+    @if (viewState$ | async; as state) {
+      <ion-card class="glass-dark tasks-summary" aria-label="Resumen de tareas">
+        <ion-card-content class="tasks-summary__content">
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-align-items-center">
+              <ion-col size="6" class="tasks-summary__metric tasks-summary__metric--bordered">
+                <ion-text class="tasks-summary__value">
+                  {{ countPending(state.tasks) }}
+                </ion-text>
+                <ion-text class="dw-text-muted">Pendientes</ion-text>
+              </ion-col>
 
-    <app-task-form
-      [disabled]="isLoading"
-      (taskSubmitted)="onCreateTask($event)"
-    ></app-task-form>
+              <ion-col size="6" class="tasks-summary__metric">
+                <ion-text color="secondary" class="tasks-summary__value tasks-summary__value--accent">
+                  {{ countCompleted(state.tasks) }}
+                </ion-text>
+                <ion-text class="dw-text-muted">Completadas</ion-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
 
-    @if (errorMessage) {
-    <div class="dw-error-box" role="alert">
-      <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
-      <span>{{ errorMessage }}</span>
-    </div>
-    } @if (isLoading) {
-    <div class="dw-state-box" aria-live="polite">
-      <ion-spinner color="primary" name="crescent"></ion-spinner>
-      <p class="dw-text-muted">Cargando tus tareas...</p>
-    </div>
-    } @else if (tasks.length === 0) {
-    <div class="dw-state-box">
-      <ion-icon
-        name="checkmark-done-circle-outline"
-        aria-hidden="true"
-      ></ion-icon>
-      <h2 class="dw-title-section">Sin tareas pendientes</h2>
-      <p class="dw-text-muted">
-        Agrega tu primera tarea arriba para organizar tu día.
-      </p>
-    </div>
-    } @else {
-    <section class="tasks-list" aria-label="Lista de tareas">
-      @for (task of tasks; track task.id) {
-      <app-task-item
-        [task]="task"
-        (toggleRequested)="onToggleTask($event)"
-        (deleteRequested)="onDeleteTask($event)"
-      ></app-task-item>
+      <app-task-form
+        [categories]="state.categories"
+        [disabled]="isLoading"
+        (taskSubmitted)="onCreateTask($event)"
+      ></app-task-form>
+
+      @if (errorMessage) {
+        <ion-item lines="none" class="dw-error-box tasks-page__error" role="alert">
+          <ion-icon
+            slot="start"
+            name="alert-circle-outline"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-text color="danger">{{ errorMessage }}</ion-text>
+        </ion-item>
       }
-    </section>
-    } }
-  </div>
+
+      @if (isLoading) {
+        <ion-card class="dw-card tasks-page__state-card">
+          <ion-card-content class="dw-state-box" aria-live="polite">
+            <ion-spinner color="primary" name="crescent"></ion-spinner>
+            <ion-text class="dw-text-muted">Cargando tus tareas...</ion-text>
+          </ion-card-content>
+        </ion-card>
+      } @else if (state.tasks.length === 0) {
+        <ion-card class="dw-card tasks-page__state-card">
+          <ion-card-content class="dw-state-box">
+            <ion-icon
+              name="checkmark-done-circle-outline"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-text class="dw-title-section">Sin tareas pendientes</ion-text>
+            <ion-text class="dw-text-muted">
+              Agrega tu primera tarea arriba para organizar tu día.
+            </ion-text>
+          </ion-card-content>
+        </ion-card>
+      } @else {
+        <ion-list
+          lines="none"
+          class="tasks-list"
+          aria-label="Lista de tareas"
+        >
+          @for (task of state.tasks; track task.id) {
+            <app-task-item
+              [task]="task"
+              [category]="findCategory(state.categories, task.categoryId)"
+              (toggleRequested)="onToggleTask($event)"
+              (deleteRequested)="confirmDeleteTask($event)"
+            ></app-task-item>
+          }
+        </ion-list>
+      }
+    }
+  </ion-grid>
 </ion-content>

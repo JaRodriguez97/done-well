@@ -61,12 +61,13 @@ describe('TasksService', () => {
     expect(current).toEqual([]);
   });
 
-  it('should add a new task at the beginning and persist', async () => {
-    const created = await service.addTask('  Preparar demo Android  ');
+  it('should add a new task at the beginning with category and persist', async () => {
+    const created = await service.addTask('  Preparar demo Android  ', 'cat-trabajo');
     const current = await firstValueFrom(service.tasks$);
 
     expect(created.title).toBe('Preparar demo Android');
     expect(created.completed).toBeFalse();
+    expect(created.categoryId).toBe('cat-trabajo');
     expect(current[0]).toEqual(created);
     expect(storageSpy.set).toHaveBeenCalledOnceWith(
       STORAGE_KEYS.TASKS,
@@ -104,5 +105,41 @@ describe('TasksService', () => {
 
     expect(current).toEqual([]);
     expect(storageSpy.set).toHaveBeenCalledOnceWith(STORAGE_KEYS.TASKS, []);
+  });
+
+  it('should clear categoryId from matching tasks without deleting them', async () => {
+    const first = await service.addTask('Con categoría', 'cat-trabajo');
+    const second = await service.addTask('Otra categoría', 'cat-personal');
+    storageSpy.set.calls.reset();
+
+    await service.clearCategoryFromTasks('cat-trabajo');
+    const current = await firstValueFrom(service.tasks$);
+
+    expect(current.find((item) => item.id === first.id)?.categoryId).toBeNull();
+    expect(current.find((item) => item.id === second.id)?.categoryId).toBe(
+      'cat-personal',
+    );
+    expect(storageSpy.set).toHaveBeenCalledOnceWith(STORAGE_KEYS.TASKS, current);
+  });
+
+  it('should skip persisting when clearing an unused categoryId', async () => {
+    await service.addTask('Sin categoría', null);
+    storageSpy.set.calls.reset();
+
+    await service.clearCategoryFromTasks('cat-inexistente');
+
+    expect(storageSpy.set).not.toHaveBeenCalled();
+  });
+
+  it('should delete only tasks matching the given categoryId', async () => {
+    await service.addTask('Eliminar esta', 'cat-urgente');
+    const keep = await service.addTask('Conservar esta', 'cat-personal');
+    storageSpy.set.calls.reset();
+
+    await service.deleteTasksByCategory('cat-urgente');
+    const current = await firstValueFrom(service.tasks$);
+
+    expect(current).toEqual([keep]);
+    expect(storageSpy.set).toHaveBeenCalledOnceWith(STORAGE_KEYS.TASKS, [keep]);
   });
 });

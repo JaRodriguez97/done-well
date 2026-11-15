@@ -1,17 +1,28 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
+  AlertController,
+  IonCard,
+  IonCardContent,
+  IonCol,
   IonContent,
+  IonGrid,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonList,
+  IonRow,
   IonSpinner,
+  IonText,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { alertCircleOutline, checkmarkDoneCircleOutline } from 'ionicons/icons';
-import { Observable } from 'rxjs';
-import { Task } from '../../../../core/models/task.model';
+import { combineLatest } from 'rxjs';
+import { Category } from '../../../../core/models/category.model';
+import { Task, TaskPayload } from '../../../../core/models/task.model';
+import { CategoriesService } from '../../../categories/services/categories.service';
 import { TaskFormComponent } from '../../components/task-form/task-form.component';
 import { TaskItemComponent } from '../../components/task-item/task-item.component';
 import { TasksService } from '../../services/tasks.service';
@@ -27,18 +38,34 @@ import { TasksService } from '../../services/tasks.service';
     IonToolbar,
     IonTitle,
     IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+    IonList,
+    IonItem,
     IonSpinner,
     IonIcon,
+    IonText,
     TaskFormComponent,
     TaskItemComponent,
   ],
 })
 export class TasksPage implements OnInit {
-  readonly tasks$: Observable<Task[]> = this.tasksService.tasks$;
+  readonly viewState$ = combineLatest({
+    tasks: this.tasksService.tasks$,
+    categories: this.categoriesService.categories$,
+  });
+
   isLoading = true;
   errorMessage: string | null = null;
 
-  constructor(private readonly tasksService: TasksService) {
+  constructor(
+    private readonly tasksService: TasksService,
+    private readonly categoriesService: CategoriesService,
+    private readonly alertController: AlertController,
+  ) {
     addIcons({ checkmarkDoneCircleOutline, alertCircleOutline });
   }
 
@@ -47,13 +74,16 @@ export class TasksPage implements OnInit {
   }
 
   /**
-   * Carga las tareas desde almacenamiento local manejando estado de carga y error.
+   * Carga las tareas y categorías almacenadas localmente manejando carga y error.
    */
   async initializeTasks(): Promise<void> {
     this.isLoading = true;
     this.errorMessage = null;
     try {
-      await this.tasksService.loadTasks();
+      await Promise.all([
+        this.tasksService.loadTasks(),
+        this.categoriesService.loadCategories(),
+      ]);
     } catch {
       this.errorMessage = 'No se pudieron cargar las tareas almacenadas.';
     } finally {
@@ -61,10 +91,13 @@ export class TasksPage implements OnInit {
     }
   }
 
-  async onCreateTask(title: string): Promise<void> {
+  /**
+   * Crea una nueva tarea con su título y categoría asignada.
+   */
+  async onCreateTask(payload: TaskPayload): Promise<void> {
     this.errorMessage = null;
     try {
-      await this.tasksService.addTask(title);
+      await this.tasksService.addTask(payload.title, payload.categoryId);
     } catch (error) {
       this.errorMessage =
         error instanceof Error ? error.message : 'No se pudo guardar la tarea.';
@@ -80,6 +113,29 @@ export class TasksPage implements OnInit {
     }
   }
 
+  /**
+   * Muestra una confirmación mediante AlertController antes de eliminar una tarea.
+   */
+  async confirmDeleteTask(task: Task): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Eliminar tarea',
+      message: `¿Deseas eliminar "${task.title}"?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => this.onDeleteTask(task.id),
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
   async onDeleteTask(taskId: string): Promise<void> {
     this.errorMessage = null;
     try {
@@ -87,6 +143,13 @@ export class TasksPage implements OnInit {
     } catch {
       this.errorMessage = 'No se pudo eliminar la tarea.';
     }
+  }
+
+  findCategory(categories: Category[], categoryId: string | null): Category | null {
+    if (!categoryId) {
+      return null;
+    }
+    return categories.find((category) => category.id === categoryId) ?? null;
   }
 
   countCompleted(tasks: Task[]): number {
