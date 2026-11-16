@@ -62,7 +62,10 @@ describe('TasksService', () => {
   });
 
   it('should add a new task at the beginning with category and persist', async () => {
-    const created = await service.addTask('  Preparar demo Android  ', 'cat-trabajo');
+    const created = await service.addTask(
+      '  Preparar demo Android  ',
+      'cat-trabajo',
+    );
     const current = await firstValueFrom(service.tasks$);
 
     expect(created.title).toBe('Preparar demo Android');
@@ -119,7 +122,10 @@ describe('TasksService', () => {
     expect(current.find((item) => item.id === second.id)?.categoryId).toBe(
       'cat-personal',
     );
-    expect(storageSpy.set).toHaveBeenCalledOnceWith(STORAGE_KEYS.TASKS, current);
+    expect(storageSpy.set).toHaveBeenCalledOnceWith(
+      STORAGE_KEYS.TASKS,
+      current,
+    );
   });
 
   it('should skip persisting when clearing an unused categoryId', async () => {
@@ -141,5 +147,83 @@ describe('TasksService', () => {
 
     expect(current).toEqual([keep]);
     expect(storageSpy.set).toHaveBeenCalledOnceWith(STORAGE_KEYS.TASKS, [keep]);
+  });
+
+  it('should add a task with priority, status, description, subtasks and dates', async () => {
+    const created = await service.addTask('Publicar APK', 'cat-trabajo', {
+      priority: 'high',
+      status: 'in_progress',
+      description: 'Validar build final en USB',
+      subtasks: [{ id: 'sub-1', title: 'Compilar release', completed: false }],
+      startDate: '2026-11-16',
+      dueDate: '2026-11-18',
+    });
+
+    expect(created.priority).toBe('high');
+    expect(created.status).toBe('in_progress');
+    expect(created.completed).toBeFalse();
+    expect(created.description).toBe('Validar build final en USB');
+    expect(created.subtasks?.length).toBe(1);
+    expect(created.startDate).toBe('2026-11-16');
+    expect(created.dueDate).toBe('2026-11-18');
+  });
+
+  it('should update task status and sync completed flag', async () => {
+    const created = await service.addTask('Revisar entregas');
+    storageSpy.set.calls.reset();
+
+    await service.updateTaskStatus(created.id, 'in_progress');
+    let current = await firstValueFrom(service.tasks$);
+    expect(current[0].status).toBe('in_progress');
+    expect(current[0].completed).toBeFalse();
+
+    await service.updateTaskStatus(created.id, 'completed');
+    current = await firstValueFrom(service.tasks$);
+    expect(current[0].status).toBe('completed');
+    expect(current[0].completed).toBeTrue();
+    expect(storageSpy.set).toHaveBeenCalledTimes(2);
+  });
+
+  it('should toggle subtask completion state and persist', async () => {
+    const created = await service.addTask('Preparar demo', null, {
+      subtasks: [{ id: 'sub-1', title: 'Grabar video', completed: false }],
+    });
+    storageSpy.set.calls.reset();
+
+    await service.toggleSubtask(created.id, 'sub-1');
+    const current = await firstValueFrom(service.tasks$);
+
+    expect(current[0].subtasks?.[0].completed).toBeTrue();
+    expect(storageSpy.set).toHaveBeenCalledOnceWith(
+      STORAGE_KEYS.TASKS,
+      current,
+    );
+  });
+
+  it('should update full task details and persist changes', async () => {
+    const created = await service.addTask('Tarea inicial', null, {
+      priority: 'low',
+    });
+    storageSpy.set.calls.reset();
+
+    await service.updateTask(created.id, {
+      title: 'Tarea modificada',
+      categoryId: 'cat-trabajo',
+      priority: 'high',
+      description: 'Nueva descripción',
+      startDate: '2026-11-16',
+      dueDate: '2026-11-20',
+      subtasks: [{ id: 's-1', title: 'Subtarea editada', completed: false }],
+    });
+
+    const current = await firstValueFrom(service.tasks$);
+    expect(current[0].title).toBe('Tarea modificada');
+    expect(current[0].categoryId).toBe('cat-trabajo');
+    expect(current[0].priority).toBe('high');
+    expect(current[0].description).toBe('Nueva descripción');
+    expect(current[0].startDate).toBe('2026-11-16');
+    expect(current[0].dueDate).toBe('2026-11-20');
+    expect(current[0].subtasks?.length).toBe(1);
+    expect(storageSpy.set).toHaveBeenCalled();
   });
 });

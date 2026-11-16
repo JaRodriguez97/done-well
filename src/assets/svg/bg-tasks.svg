@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="dw-grad-tasks" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7567F8" stop-opacity="0.32" />
+      <stop offset="100%" stop-color="#00E5FF" stop-opacity="0.22" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke-linecap="round">
+    <!-- 7 lineas de flujo dinamico para Tareas -->
+    <path d="M -30,60 Q 140,110 430,40" stroke="url(#dw-grad-tasks)" stroke-width="2" />
+    <path d="M -30,110 Q 160,170 430,90" stroke="#7567F8" stroke-width="1.6" stroke-opacity="0.26" />
+    <path d="M -20,280 Q 210,220 430,310" stroke="#00E5FF" stroke-width="1.8" stroke-opacity="0.24" />
+    <path d="M -20,330 Q 180,280 430,360" stroke="#7567F8" stroke-width="1.4" stroke-opacity="0.22" />
+    <path d="M 80,520 L 440,680" stroke="url(#dw-grad-tasks)" stroke-width="1.8" />
+    <path d="M -40,640 Q 190,690 420,590" stroke="#00E5FF" stroke-width="2" stroke-opacity="0.28" />
+    <path d="M -40,690 Q 210,750 420,640" stroke="#7567F8" stroke-width="1.5" stroke-opacity="0.24" />
+  </g>
+</svg>

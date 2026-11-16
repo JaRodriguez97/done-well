@@ -1,3 +1,34 @@
 <ion-app>
+  @if (isSplashVisible) {
+    <div
+      class="dw-splash"
+      [class.dw-splash--fade-out]="isSplashFadingOut"
+      role="status"
+      aria-live="polite"
+      aria-label="Iniciando DoneWell"
+    >
+      <img
+        src="assets/svg/splash-curves.svg"
+        alt=""
+        aria-hidden="true"
+        class="dw-splash__curves"
+      />
+
+      <div class="dw-splash__brand">
+        <div class="dw-splash__logo-wrapper">
+          <img
+            src="assets/icon/donewell-logo.png"
+            alt="Logo DoneWell"
+            class="dw-splash__logo"
+          />
+        </div>
+        <ion-text class="dw-splash__title">DoneWell</ion-text>
+        <ion-text class="dw-splash__subtitle">
+          Organiza tu día con claridad
+        </ion-text>
+      </div>
+    </div>
+  }
+
   <ion-router-outlet></ion-router-outlet>
 </ion-app>

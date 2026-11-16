@@ -1,47 +1,79 @@
-<ion-card class="dw-card category-item" [ngClass]="borderClass">
-  <ion-item lines="none" class="category-item__row">
-    <ion-icon
-      slot="start"
-      [name]="category.icon"
-      [style.color]="'var(--color-' + category.colorKey + ')'"
-      aria-hidden="true"
-    ></ion-icon>
+<ion-card
+  class="category-card"
+  [ngClass]="glassClass"
+  [class.category-card--expanded]="isExpanded"
+  [class.category-card--last-collapsed]="isLast && !isExpanded"
+  (click)="onCardClick()"
+  role="button"
+  [attr.aria-expanded]="isExpanded"
+  [attr.aria-label]="category.name + ' · Toca para ver tareas y completadas'"
+  tabindex="0"
+>
+  <div class="category-card__body">
+    <div class="category-card__header">
+      <div class="category-card__title-group">
+        <ion-icon
+          class="category-card__icon"
+          [name]="category.icon"
+          aria-hidden="true"
+        ></ion-icon>
+        <ion-text class="category-card__title">{{ category.name }}</ion-text>
+      </div>
 
-    <ion-label class="category-item__label">
-      <ion-text class="category-item__name">{{ category.name }}</ion-text>
-      <ion-badge color="medium" class="category-item__badge">
-        {{ taskCount }} {{ taskCount === 1 ? 'tarea' : 'tareas' }}
-      </ion-badge>
-    </ion-label>
+      <ion-buttons class="category-card__actions">
+        <ion-button
+          fill="clear"
+          class="dw-touch-target category-card__btn category-card__btn--edit"
+          [attr.aria-label]="'Editar categoría ' + category.name"
+          (click)="onEdit($event)"
+        >
+          <ion-icon
+            slot="icon-only"
+            name="create-outline"
+            aria-hidden="true"
+          ></ion-icon>
+        </ion-button>
 
-    <ion-buttons slot="end">
+        <ion-button
+          fill="clear"
+          class="dw-touch-target category-card__btn category-card__btn--delete"
+          [attr.aria-label]="'Eliminar categoría ' + category.name"
+          (click)="onDelete($event)"
+        >
+          <ion-icon
+            slot="icon-only"
+            name="trash-outline"
+            aria-hidden="true"
+          ></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </div>
+
+    <div class="category-card__footer">
+      <div class="category-card__stats-group">
+        <ion-text class="category-card__task-count">
+          {{ taskCount }} {{ taskCount === 1 ? 'tarea' : 'tareas' }}
+        </ion-text>
+
+        <div class="category-card__badge" aria-label="Tareas completadas">
+          {{ completedTaskCount }} completadas
+        </div>
+      </div>
+
       <ion-button
         fill="clear"
-        color="secondary"
-        class="dw-touch-target"
-        [attr.aria-label]="'Editar categoría ' + category.name"
-        (click)="onEdit()"
+        size="small"
+        class="category-card__view-tasks-btn"
+        (click)="onViewTasks($event)"
+        aria-label="Ver tareas de esta categoría"
       >
+        <span>Ver tareas</span>
         <ion-icon
-          slot="icon-only"
-          name="create-outline"
+          slot="end"
+          name="arrow-forward-outline"
           aria-hidden="true"
         ></ion-icon>
       </ion-button>
-
-      <ion-button
-        fill="clear"
-        color="danger"
-        class="dw-touch-target"
-        [attr.aria-label]="'Eliminar categoría ' + category.name"
-        (click)="onDelete()"
-      >
-        <ion-icon
-          slot="icon-only"
-          name="trash-outline"
-          aria-hidden="true"
-        ></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-item>
+    </div>
+  </div>
 </ion-card>

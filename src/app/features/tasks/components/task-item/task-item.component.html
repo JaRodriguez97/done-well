@@ -1,6 +1,10 @@
 <ion-card
   class="dw-card task-item"
-  [ngClass]="[borderClass, task.completed ? 'task-item--completed' : '']"
+  [ngClass]="[
+    borderClass,
+    task.completed ? 'task-item--completed' : '',
+    resolvedStatus === 'in_progress' ? 'task-item--in-progress' : '',
+  ]"
 >
   <ion-item lines="none" class="task-item__row">
     <ion-checkbox
@@ -15,39 +19,204 @@
     <ion-label class="ion-text-wrap task-item__content">
       <ion-text class="task-item__title">{{ task.title }}</ion-text>
 
-      @if (category) {
+      <ion-row class="ion-align-items-center task-item__meta">
+        @if (category) {
+          <ion-chip
+            class="task-item__chip"
+            [style.border-color]="'var(--color-' + category.colorKey + ')'"
+          >
+            <ion-icon
+              [name]="category.icon"
+              [style.color]="'var(--color-' + category.colorKey + ')'"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-label class="task-item__chip-label">{{
+              category.name
+            }}</ion-label>
+          </ion-chip>
+        } @else {
+          <ion-chip class="task-item__chip task-item__chip--empty">
+            <ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon>
+            <ion-label class="task-item__chip-label">Sin categoría</ion-label>
+          </ion-chip>
+        }
+
         <ion-chip
-          class="task-item__chip"
-          [style.border-color]="'var(--color-' + category.colorKey + ')'"
+          class="task-item__chip task-item__priority-chip"
+          [style.border-color]="priorityOption.cssVar"
         >
           <ion-icon
-            [name]="category.icon"
-            [style.color]="'var(--color-' + category.colorKey + ')'"
+            [name]="priorityOption.icon"
+            [style.color]="priorityOption.cssVar"
             aria-hidden="true"
           ></ion-icon>
-          <ion-label class="task-item__chip-label">{{ category.name }}</ion-label>
+          <ion-label class="task-item__chip-label">
+            {{ priorityOption.label }}
+          </ion-label>
         </ion-chip>
-      } @else {
-        <ion-chip class="task-item__chip task-item__chip--empty">
-          <ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon>
-          <ion-label class="task-item__chip-label">Sin categoría</ion-label>
+
+        <ion-chip
+          class="task-item__chip task-item__status-chip"
+          [style.border-color]="statusOption.cssVar"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="
+            'Cambiar estado de ' +
+            task.title +
+            ', actual: ' +
+            statusOption.label
+          "
+          (click)="onCycleStatus()"
+          (keydown.enter)="onCycleStatus()"
+        >
+          <ion-icon
+            [name]="statusOption.icon"
+            [style.color]="statusOption.cssVar"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-label class="task-item__chip-label">
+            {{ statusOption.label }}
+          </ion-label>
         </ion-chip>
-      }
+
+        @if (totalSubtasksCount > 0) {
+          <ion-chip
+            class="task-item__chip task-item__toggle-chip"
+            [class.task-item__toggle-chip--expanded]="isExpanded"
+            role="button"
+            tabindex="0"
+            [attr.aria-expanded]="isExpanded"
+            [attr.aria-label]="(isExpanded ? 'Ocultar' : 'Ver') + ' ' + totalSubtasksCount + ' microtareas'"
+            (click)="toggleExpanded()"
+            (keydown.enter)="toggleExpanded()"
+          >
+            <ion-icon name="list-outline" aria-hidden="true"></ion-icon>
+            <ion-label class="task-item__chip-label">
+              {{ completedSubtasksCount }}/{{ totalSubtasksCount }}
+            </ion-label>
+            <ion-icon
+              [name]="isExpanded ? 'chevron-up-outline' : 'chevron-down-outline'"
+              aria-hidden="true"
+            ></ion-icon>
+          </ion-chip>
+        } @else if (hasDetails) {
+          <ion-chip
+            class="task-item__chip task-item__toggle-chip"
+            [class.task-item__toggle-chip--expanded]="isExpanded"
+            role="button"
+            tabindex="0"
+            [attr.aria-expanded]="isExpanded"
+            [attr.aria-label]="isExpanded ? 'Ocultar detalles' : 'Ver detalles'"
+            (click)="toggleExpanded()"
+            (keydown.enter)="toggleExpanded()"
+          >
+            <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+            <ion-label class="task-item__chip-label">Detalles</ion-label>
+            <ion-icon
+              [name]="isExpanded ? 'chevron-up-outline' : 'chevron-down-outline'"
+              aria-hidden="true"
+            ></ion-icon>
+          </ion-chip>
+        }
+      </ion-row>
     </ion-label>
 
-    <ion-button
-      slot="end"
-      fill="clear"
-      color="danger"
-      class="dw-touch-target task-item__delete"
-      [attr.aria-label]="'Eliminar tarea ' + task.title"
-      (click)="onDelete()"
-    >
-      <ion-icon
-        slot="icon-only"
-        name="trash-outline"
-        aria-hidden="true"
-      ></ion-icon>
-    </ion-button>
+    <ion-buttons slot="end" class="task-item__actions">
+      <ion-button
+        fill="clear"
+        class="dw-touch-target task-item__action-btn task-item__action-btn--edit"
+        [attr.aria-label]="'Editar tarea ' + task.title"
+        (click)="onEdit()"
+      >
+        <ion-icon
+          slot="icon-only"
+          name="create-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </ion-button>
+
+      <ion-button
+        fill="clear"
+        color="danger"
+        class="dw-touch-target task-item__action-btn task-item__action-btn--delete"
+        [attr.aria-label]="'Eliminar tarea ' + task.title"
+        (click)="onDelete()"
+      >
+        <ion-icon
+          slot="icon-only"
+          name="trash-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-item>
+
+  @if (hasDetails && isExpanded) {
+    <div class="task-item__details">
+      @if (task.startDate || task.dueDate) {
+        <div
+          class="task-item__dates-row"
+          [class.task-item__dates-row--overdue]="isOverdue"
+        >
+          <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+          <div class="task-item__dates-content">
+            @if (task.startDate && task.dueDate) {
+              <span class="task-item__date-badge">
+                Inicio: <strong>{{ task.startDate }}</strong>
+              </span>
+              <span class="task-item__date-separator">→</span>
+              <span class="task-item__date-badge">
+                Límite: <strong>{{ task.dueDate }}</strong>
+              </span>
+            } @else if (task.dueDate) {
+              <span class="task-item__date-badge">
+                Límite: <strong>{{ task.dueDate }}</strong>
+              </span>
+            } @else if (task.startDate) {
+              <span class="task-item__date-badge">
+                Inicio: <strong>{{ task.startDate }}</strong>
+              </span>
+            }
+            @if (isOverdue) {
+              <span class="task-item__overdue-badge">Vencida</span>
+            }
+          </div>
+        </div>
+      }
+
+      @if (task.description) {
+        <ion-text class="dw-text-muted task-item__description">
+          {{ task.description }}
+        </ion-text>
+      }
+
+      @if (totalSubtasksCount > 0) {
+        <ion-list lines="none" class="task-item__subtasks" aria-label="Microtareas">
+          <ion-text class="dw-text-muted task-item__subtasks-counter">
+            <ion-icon name="list-outline" aria-hidden="true"></ion-icon>
+            {{ completedSubtasksCount }} / {{ totalSubtasksCount }} microtareas
+          </ion-text>
+
+          @for (subtask of task.subtasks; track subtask.id) {
+            <ion-item lines="none" class="task-item__subtask">
+              <ion-checkbox
+                slot="start"
+                class="task-item__subtask-checkbox"
+                color="secondary"
+                [checked]="subtask.completed"
+                [attr.aria-label]="'Alternar microtarea ' + subtask.title"
+                (ionChange)="onSubtaskToggle(subtask.id)"
+              ></ion-checkbox>
+              <ion-label
+                class="ion-text-wrap task-item__subtask-title"
+                [class.task-item__subtask-title--done]="subtask.completed"
+              >
+                {{ subtask.title }}
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      }
+    </div>
+  }
 </ion-card>

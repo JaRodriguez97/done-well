@@ -84,7 +84,9 @@ describe('TaskCategoryFilterComponent', () => {
     expect(trabajoChip.textContent).toContain('Trabajo');
 
     trabajoChip.click();
-    expect(component.filterChanged.emit).toHaveBeenCalledOnceWith('cat-trabajo');
+    expect(component.filterChanged.emit).toHaveBeenCalledOnceWith(
+      'cat-trabajo',
+    );
 
     chips[1].click();
     expect(component.filterChanged.emit).toHaveBeenCalledWith('uncategorized');

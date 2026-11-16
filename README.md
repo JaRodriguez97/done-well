@@ -104,7 +104,7 @@ flowchart LR
   Plugin --> Cloud["Firebase Remote Config"]
 ```
 
-<details>
+<details open>
 <summary>📂 <strong>Ver estructura de carpetas del proyecto (<code>src/app/</code>)</strong></summary>
 
 ```text
@@ -128,7 +128,7 @@ src/app/
 
 | Herramienta         | Versión                         | Uso principal                                             |
 | :------------------ | :------------------------------ | :-------------------------------------------------------- |
-| **Node.js**         | `v20.x` (`>= 20.5.0`)           | Entorno de ejecución compatible con Cordova 14            |
+| **Node.js**         | `v20.x` (`>= 20.20.0`)           | Entorno de ejecución compatible con Cordova 14            |
 | **Angular**         | `17.3.x`                        | Framework base con componentes Standalone                 |
 | **Ionic Angular**   | `8.0.x`                         | Componentes UI móviles nativos                            |
 | **Cordova CLI**     | `13.x`                          | Empaquetado híbrido multiplataforma                       |

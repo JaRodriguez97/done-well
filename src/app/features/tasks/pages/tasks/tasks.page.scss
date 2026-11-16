@@ -1,6 +1,26 @@
+ion-content {
+  --background: var(--ion-background-color) url('/assets/svg/bg-tasks.svg')
+    no-repeat center / cover;
+}
+
 .tasks-page__container {
   margin: 0;
   width: 100%;
+  animation: pageSoftSpring 0.38s cubic-bezier(0.18, 0.89, 0.32, 1.12) both;
+}
+
+@keyframes pageSoftSpring {
+  0% {
+    opacity: 0.86;
+    transform: translateY(10px) scale(0.996);
+  }
+  70% {
+    transform: translateY(-2px) scale(1.001);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .tasks-summary {
@@ -8,6 +28,18 @@
 }
 
 .tasks-page__create-btn {
+  margin: 0;
+}
+
+.tasks-page__searchbar {
+  --background: rgba(255, 255, 255, 0.05);
+  --color: var(--ion-text-color, #ffffff);
+  --placeholder-color: var(--dw-muted-text);
+  --icon-color: var(--dw-accent-cyan, #00e5ff);
+  --clear-button-color: var(--dw-muted-text);
+  --border-radius: 12px;
+  --box-shadow: none;
+  padding: 0;
   margin: 0;
 }
 

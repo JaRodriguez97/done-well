@@ -101,11 +101,181 @@
         <ion-icon name="stats-chart-outline" aria-hidden="true"></ion-icon>
         <ion-text class="dw-title-section">Sin datos para mostrar</ion-text>
         <ion-text class="dw-text-muted">
-          Agrega tareas para visualizar el avance por categoría.
+          Agrega tareas para visualizar el desglose estadístico.
         </ion-text>
       </ion-card-content>
     </ion-card>
     } @else {
+    <!-- Distribución por Estados -->
+    <ion-card
+      class="glass-dark stats-card"
+      aria-label="Distribución por estados"
+    >
+      <ion-card-content class="stats-card__content">
+        <ion-row
+          class="ion-align-items-center ion-justify-content-between stats-card__header"
+        >
+          <div class="stats-card__title-group">
+            <ion-icon
+              name="time-outline"
+              class="stats-card__title-icon"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-text class="dw-title-section">Estado de las tareas</ion-text>
+          </div>
+          <ion-badge color="primary"
+            >{{ overview.totalTasks }} totales</ion-badge
+          >
+        </ion-row>
+
+        <!-- Barra de distribucion segmentada -->
+        <div class="stats-dist-bar" aria-hidden="true">
+          <div
+            class="stats-dist-bar__segment stats-dist-bar__segment--completed"
+            [style.width.%]="overview.statusDistribution.completedRatio * 100"
+          ></div>
+          <div
+            class="stats-dist-bar__segment stats-dist-bar__segment--inprogress"
+            [style.width.%]="overview.statusDistribution.inProgressRatio * 100"
+          ></div>
+          <div
+            class="stats-dist-bar__segment stats-dist-bar__segment--pending"
+            [style.width.%]="overview.statusDistribution.pendingRatio * 100"
+          ></div>
+        </div>
+
+        <ion-grid class="ion-no-padding stats-card__metrics">
+          <ion-row>
+            <ion-col size="4" class="stats-metric-col">
+              <span class="stats-dot stats-dot--completed"></span>
+              <ion-text class="stats-metric-col__value"
+                >{{ overview.statusDistribution.completed }}</ion-text
+              >
+              <ion-text class="dw-text-muted">Completadas</ion-text>
+            </ion-col>
+            <ion-col size="4" class="stats-metric-col">
+              <span class="stats-dot stats-dot--inprogress"></span>
+              <ion-text class="stats-metric-col__value"
+                >{{ overview.statusDistribution.inProgress }}</ion-text
+              >
+              <ion-text class="dw-text-muted">En progreso</ion-text>
+            </ion-col>
+            <ion-col size="4" class="stats-metric-col">
+              <span class="stats-dot stats-dot--pending"></span>
+              <ion-text class="stats-metric-col__value"
+                >{{ overview.statusDistribution.pending }}</ion-text
+              >
+              <ion-text class="dw-text-muted">Pendientes</ion-text>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Grafico de Prioridades -->
+    <ion-card
+      class="glass-dark stats-card"
+      aria-label="Rendimiento por prioridad"
+    >
+      <ion-card-content class="stats-card__content">
+        <ion-row
+          class="ion-align-items-center ion-justify-content-between stats-card__header"
+        >
+          <div class="stats-card__title-group">
+            <ion-icon
+              name="flag-outline"
+              class="stats-card__title-icon"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-text class="dw-title-section">Nivel de prioridad</ion-text>
+          </div>
+          <ion-text class="dw-text-muted">Tasa de éxito</ion-text>
+        </ion-row>
+
+        <div class="stats-priority-list">
+          @for (item of overview.priorityStats; track item.priority) {
+          <div class="stats-priority-item">
+            <div class="stats-priority-item__header">
+              <div class="stats-priority-item__name">
+                <span
+                  class="stats-priority-pill"
+                  [style.background]="item.colorHex"
+                ></span>
+                <ion-text>{{ item.label }}</ion-text>
+              </div>
+              <ion-text class="dw-text-muted">
+                {{ item.completed }}/{{ item.total }} ({{ item.completionPercent
+                }}%)
+              </ion-text>
+            </div>
+            <ion-progress-bar
+              class="stats-priority-item__bar"
+              [value]="item.total > 0 ? item.completed / item.total : 0"
+              [style.--progress-background]="item.colorHex"
+            ></ion-progress-bar>
+          </div>
+          }
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Microtareas y Vencimientos -->
+    <ion-row class="ion-no-padding stats-duo-row">
+      <!-- Tarjeta Microtareas -->
+      <ion-col size="6" class="stats-duo-col">
+        <ion-card class="glass-dark stats-mini-card" aria-label="Microtareas">
+          <ion-card-content class="stats-mini-card__content">
+            <div
+              class="stats-mini-card__icon-wrap stats-mini-card__icon-wrap--cyan"
+            >
+              <ion-icon name="list-outline" aria-hidden="true"></ion-icon>
+            </div>
+            <ion-text class="stats-mini-card__value">
+              {{ overview.subtasksTelemetry.completed }}/{{
+              overview.subtasksTelemetry.total }}
+            </ion-text>
+            <ion-text class="stats-mini-card__label"
+              >Microtareas hechas</ion-text
+            >
+            <ion-progress-bar
+              class="stats-mini-card__bar"
+              [value]="overview.subtasksTelemetry.total > 0 ? overview.subtasksTelemetry.completed / overview.subtasksTelemetry.total : 0"
+              color="secondary"
+            ></ion-progress-bar>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <!-- Tarjeta Vencimientos -->
+      <ion-col size="6" class="stats-duo-col">
+        <ion-card class="glass-dark stats-mini-card" aria-label="Vencimientos">
+          <ion-card-content class="stats-mini-card__content">
+            <div
+              class="stats-mini-card__icon-wrap"
+              [class.stats-mini-card__icon-wrap--danger]="overview.dueDateTelemetry.overdue > 0"
+              [class.stats-mini-card__icon-wrap--purple]="overview.dueDateTelemetry.overdue === 0"
+            >
+              <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+            </div>
+            <ion-text
+              class="stats-mini-card__value"
+              [class.dw-text-danger]="overview.dueDateTelemetry.overdue > 0"
+            >
+              {{ overview.dueDateTelemetry.overdue }}
+            </ion-text>
+            <ion-text class="stats-mini-card__label">
+              {{ overview.dueDateTelemetry.overdue === 1 ? 'Tarea vencida' :
+              'Tareas vencidas' }}
+            </ion-text>
+            <ion-text class="stats-mini-card__sublabel dw-text-muted">
+              {{ overview.dueDateTelemetry.withDueDate }} con fecha
+            </ion-text>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <!-- Rendimiento por Categoria -->
     <ion-text class="dw-text-muted stats-page__section-title">
       Rendimiento por categoría
     </ion-text>

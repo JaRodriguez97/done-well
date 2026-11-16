@@ -29,6 +29,16 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'tasks',
+        redirectTo: 'tab1',
+        pathMatch: 'full',
+      },
+      {
+        path: 'categories',
+        redirectTo: 'tab2',
+        pathMatch: 'full',
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full',

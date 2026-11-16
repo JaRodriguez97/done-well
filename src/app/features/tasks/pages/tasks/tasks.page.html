@@ -52,6 +52,16 @@
         (filterChanged)="onFilterChange($event)"
       ></app-task-category-filter>
 
+      <ion-searchbar
+        class="tasks-page__searchbar"
+        placeholder="Buscar tarea o subtarea..."
+        [value]="searchQuery"
+        [debounce]="150"
+        show-clear-button="focus"
+        aria-label="Buscar tareas o subtareas por texto"
+        (ionInput)="onSearchInput($event)"
+      ></ion-searchbar>
+
       @if (errorMessage && !isCreateModalOpen) {
         <ion-item lines="none" class="dw-error-box tasks-page__error" role="alert">
           <ion-icon
@@ -86,20 +96,37 @@
       } @else if (filterTasks(state.tasks, state.categories).length === 0) {
         <ion-card class="dw-card tasks-page__state-card">
           <ion-card-content class="dw-state-box">
-            <ion-icon name="filter-outline" aria-hidden="true"></ion-icon>
-            <ion-text class="dw-title-section">Sin tareas para este filtro</ion-text>
-            <ion-text class="dw-text-muted">
-              No hay tareas asociadas a la categoría seleccionada.
-            </ion-text>
-            <ion-button
-              type="button"
-              fill="outline"
-              color="secondary"
-              class="dw-touch-target tasks-page__reset-filter"
-              (click)="onFilterChange('all')"
-            >
-              Ver todas las tareas
-            </ion-button>
+            @if (searchQuery.trim().length > 0) {
+              <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+              <ion-text class="dw-title-section">Sin resultados de búsqueda</ion-text>
+              <ion-text class="dw-text-muted">
+                No hay tareas ni subtareas que coincidan con &ldquo;{{ searchQuery }}&rdquo;.
+              </ion-text>
+              <ion-button
+                type="button"
+                fill="outline"
+                color="secondary"
+                class="dw-touch-target tasks-page__reset-filter"
+                (click)="clearSearch()"
+              >
+                Limpiar búsqueda
+              </ion-button>
+            } @else {
+              <ion-icon name="filter-outline" aria-hidden="true"></ion-icon>
+              <ion-text class="dw-title-section">Sin tareas para este filtro</ion-text>
+              <ion-text class="dw-text-muted">
+                No hay tareas asociadas a la categoría seleccionada.
+              </ion-text>
+              <ion-button
+                type="button"
+                fill="outline"
+                color="secondary"
+                class="dw-touch-target tasks-page__reset-filter"
+                (click)="onFilterChange('all')"
+              >
+                Ver todas las tareas
+              </ion-button>
+            }
           </ion-card-content>
         </ion-card>
       } @else {
@@ -113,6 +140,9 @@
               [task]="task"
               [category]="findCategory(state.categories, task.categoryId)"
               (toggleRequested)="onToggleTask($event)"
+              (statusChanged)="onStatusChange($event)"
+              (subtaskToggled)="onSubtaskToggle($event)"
+              (editRequested)="openEditTaskModal($event)"
               (deleteRequested)="confirmDeleteTask($event)"
             ></app-task-item>
           }
@@ -124,7 +154,7 @@
       <ng-template>
         <ion-header>
           <ion-toolbar class="tasks-modal__toolbar">
-            <ion-title>Nueva tarea</ion-title>
+            <ion-title>{{ taskToEdit ? 'Editar tarea' : 'Nueva tarea' }}</ion-title>
             <ion-buttons slot="end">
               <ion-button
                 type="button"
@@ -161,9 +191,10 @@
             }
 
             <app-task-form
+              [initialTask]="taskToEdit"
               [categories]="state.categories"
               [disabled]="isLoading"
-              (taskSubmitted)="onCreateTask($event)"
+              (taskSubmitted)="onSaveTask($event)"
             ></app-task-form>
           </ion-grid>
         </ion-content>

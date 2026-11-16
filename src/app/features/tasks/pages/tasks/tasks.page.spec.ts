@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AlertButton, AlertController } from '@ionic/angular/standalone';
 import { BehaviorSubject } from 'rxjs';
 import { Category } from '../../../../core/models/category.model';
@@ -39,12 +40,23 @@ describe('TasksPage', () => {
 
     tasksServiceSpy = jasmine.createSpyObj<TasksService>(
       'TasksService',
-      ['loadTasks', 'addTask', 'toggleTask', 'deleteTask'],
+      [
+        'loadTasks',
+        'addTask',
+        'updateTask',
+        'toggleTask',
+        'updateTaskStatus',
+        'toggleSubtask',
+        'deleteTask',
+      ],
       { tasks$: tasksSubject.asObservable() },
     );
     tasksServiceSpy.loadTasks.and.resolveTo();
     tasksServiceSpy.addTask.and.resolveTo(sampleTask);
+    tasksServiceSpy.updateTask.and.resolveTo();
     tasksServiceSpy.toggleTask.and.resolveTo();
+    tasksServiceSpy.updateTaskStatus.and.resolveTo();
+    tasksServiceSpy.toggleSubtask.and.resolveTo();
     tasksServiceSpy.deleteTask.and.resolveTo();
 
     categoriesServiceSpy = jasmine.createSpyObj<CategoriesService>(
@@ -69,6 +81,7 @@ describe('TasksPage', () => {
     await TestBed.configureTestingModule({
       imports: [TasksPage],
       providers: [
+        provideRouter([]),
         { provide: TasksService, useValue: tasksServiceSpy },
         { provide: CategoriesService, useValue: categoriesServiceSpy },
         { provide: AlertController, useValue: alertControllerSpy },
@@ -154,6 +167,26 @@ describe('TasksPage', () => {
     expect(component.findCategory([sampleCategory], null)).toBeNull();
   });
 
+  it('should delegate task status change and subtask toggle to TasksService', async () => {
+    await component.onStatusChange({
+      taskId: 'task-1',
+      status: 'in_progress',
+    });
+    await component.onSubtaskToggle({
+      taskId: 'task-1',
+      subtaskId: 'sub-1',
+    });
+
+    expect(tasksServiceSpy.updateTaskStatus).toHaveBeenCalledOnceWith(
+      'task-1',
+      'in_progress',
+    );
+    expect(tasksServiceSpy.toggleSubtask).toHaveBeenCalledOnceWith(
+      'task-1',
+      'sub-1',
+    );
+  });
+
   it('should filter tasks by all, uncategorized, or specific category and fallback when category is removed', () => {
     const uncategorizedTask: Task = {
       id: 'task-2',
@@ -178,5 +211,71 @@ describe('TasksPage', () => {
 
     expect(component.resolveActiveFilter([])).toBe('all');
     expect(component.filterTasks(tasks, [])).toEqual(tasks);
+  });
+
+  it('should open edit modal with selected task and update task on save', async () => {
+    component.openEditTaskModal(sampleTask);
+
+    expect(component.isCreateModalOpen).toBeTrue();
+    expect(component.taskToEdit).toEqual(sampleTask);
+
+    await component.onSaveTask({
+      title: 'Título actualizado',
+      categoryId: 'cat-trabajo',
+      priority: 'high',
+      status: 'in_progress',
+    });
+
+    expect(tasksServiceSpy.updateTask).toHaveBeenCalledOnceWith('task-1', {
+      title: 'Título actualizado',
+      categoryId: 'cat-trabajo',
+      priority: 'high',
+      status: 'in_progress',
+    });
+    expect(component.isCreateModalOpen).toBeFalse();
+    expect(component.taskToEdit).toBeNull();
+  });
+
+  it('should filter tasks by search query matching title, description or subtask and clear search', () => {
+    const taskWithDesc: Task = {
+      id: 'task-desc',
+      title: 'Organizar bodega',
+      description: 'Buscar cajas plásticas',
+      completed: false,
+      categoryId: null,
+      createdAt: '2025-01-01T00:00:00.000Z',
+    };
+    const taskWithSubtask: Task = {
+      id: 'task-sub',
+      title: 'Hacer mercado',
+      completed: false,
+      categoryId: null,
+      subtasks: [{ id: 's-1', title: 'Comprar manzanas verdes', completed: false }],
+      createdAt: '2025-01-01T00:00:00.000Z',
+    };
+    const all = [sampleTask, taskWithDesc, taskWithSubtask];
+
+    // Búsqueda por título
+    component.searchQuery = 'reporte';
+    expect(component.filterTasks(all, [sampleCategory])).toEqual([sampleTask]);
+
+    // Búsqueda por descripción
+    component.searchQuery = 'cajas plásticas';
+    expect(component.filterTasks(all, [sampleCategory])).toEqual([taskWithDesc]);
+
+    // Búsqueda por subtarea
+    component.searchQuery = 'manzanas';
+    expect(component.filterTasks(all, [sampleCategory])).toEqual([taskWithSubtask]);
+
+    // Limpiar búsqueda
+    component.clearSearch();
+    expect(component.searchQuery).toBe('');
+    expect(component.filterTasks(all, [sampleCategory])).toEqual(all);
+  });
+
+  it('should update selectedFilter on ionViewWillEnter if queryParam exists', () => {
+    expect(component.selectedFilter).toBe('all');
+    component.ionViewWillEnter();
+    expect(component.selectedFilter).toBe('all');
   });
 });

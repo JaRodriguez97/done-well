@@ -93,19 +93,73 @@ describe('StatsPage', () => {
   });
 
   it('should compute overall and per-category completion metrics including uncategorized tasks', () => {
-    const overview = component.buildStatsOverview(sampleTasks, [
+    const tasksWithDetails: Task[] = [
+      {
+        id: 't-1',
+        title: 'T1',
+        completed: true,
+        status: 'completed',
+        priority: 'high',
+        categoryId: 'cat-trabajo',
+        subtasks: [{ id: 's1', title: 'Sub1', completed: true }],
+        dueDate: '2025-01-01',
+        createdAt: '2025-01-01',
+      },
+      {
+        id: 't-2',
+        title: 'T2',
+        completed: false,
+        status: 'in_progress',
+        priority: 'medium',
+        categoryId: 'cat-trabajo',
+        subtasks: [{ id: 's2', title: 'Sub2', completed: false }],
+        dueDate: '2099-12-31',
+        createdAt: '2025-01-01',
+      },
+      {
+        id: 't-3',
+        title: 'T3',
+        completed: false,
+        status: 'pending',
+        priority: 'low',
+        categoryId: null,
+        createdAt: '2025-01-01',
+      },
+    ];
+
+    const overview = component.buildStatsOverview(tasksWithDetails, [
       sampleCategory,
     ]);
 
     expect(overview.totalTasks).toBe(3);
-    expect(overview.completedTasks).toBe(2);
-    expect(overview.pendingTasks).toBe(1);
-    expect(overview.completionPercent).toBe(67);
+    expect(overview.completedTasks).toBe(1);
+    expect(overview.pendingTasks).toBe(2);
+    expect(overview.completionPercent).toBe(33);
+
+    // Categories
     expect(overview.categoryStats.length).toBe(2);
     expect(overview.categoryStats[0].id).toBe('cat-trabajo');
-    expect(overview.categoryStats[0].completionPercent).toBe(50);
     expect(overview.categoryStats[1].id).toBe('uncategorized');
-    expect(overview.categoryStats[1].completionPercent).toBe(100);
+
+    // Priority
+    expect(overview.priorityStats.length).toBe(3);
+    const highPriority = overview.priorityStats.find((p) => p.priority === 'high');
+    expect(highPriority?.total).toBe(1);
+    expect(highPriority?.completed).toBe(1);
+
+    // Status distribution
+    expect(overview.statusDistribution.completed).toBe(1);
+    expect(overview.statusDistribution.inProgress).toBe(1);
+    expect(overview.statusDistribution.pending).toBe(1);
+
+    // Subtasks telemetry
+    expect(overview.subtasksTelemetry.total).toBe(2);
+    expect(overview.subtasksTelemetry.completed).toBe(1);
+    expect(overview.subtasksTelemetry.completionPercent).toBe(50);
+
+    // Due date telemetry
+    expect(overview.dueDateTelemetry.withDueDate).toBe(2);
+    expect(overview.dueDateTelemetry.noDueDate).toBe(1);
   });
 
   it('should trigger RemoteConfigService syncFlags when refreshing manually', async () => {

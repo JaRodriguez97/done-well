@@ -40,9 +40,34 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.task-form__textarea {
+  min-height: 68px;
+}
+
 .task-form__section-label {
   margin-top: var(--space-1);
   font-weight: 500;
+}
+
+.task-form__dates {
+  margin-inline: -4px;
+}
+
+.task-form__date-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: 0 4px;
+}
+
+.task-form__date-label {
+  font-size: 0.75rem;
+}
+
+.task-form__date-input {
+  color-scheme: dark;
+  --padding-start: var(--space-2);
+  --padding-end: var(--space-2);
 }
 
 .task-form__chips {
@@ -53,7 +78,8 @@
   padding: 0;
 }
 
-.task-form__chip {
+.task-form__chip,
+.task-form__option-chip {
   margin: 0;
   --background: var(--ion-background-color);
   --color: var(--ion-text-color);
@@ -70,6 +96,30 @@
   font-weight: 600;
 }
 
+.task-form__subtasks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  background: transparent;
+  padding: 0;
+}
+
+.task-form__subtask-item {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+  --min-height: 44px;
+  --padding-start: var(--space-2);
+  --inner-padding-end: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.task-form__subtask-label {
+  font-size: var(--font-size-sub);
+}
+
+.task-form__subtask-add,
+.task-form__subtask-remove,
 .task-form__submit {
-  margin: var(--space-1) 0 0;
+  margin: 0;
 }

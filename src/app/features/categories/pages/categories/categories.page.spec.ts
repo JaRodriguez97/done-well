@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { AlertButton, AlertController } from '@ionic/angular/standalone';
 import { BehaviorSubject } from 'rxjs';
 import { Category } from '../../../../core/models/category.model';
@@ -61,6 +62,7 @@ describe('CategoriesPage', () => {
     await TestBed.configureTestingModule({
       imports: [CategoriesPage],
       providers: [
+        provideRouter([]),
         { provide: CategoriesService, useValue: categoriesServiceSpy },
         { provide: TasksService, useValue: tasksServiceSpy },
         { provide: AlertController, useValue: alertControllerSpy },
@@ -197,5 +199,78 @@ describe('CategoriesPage', () => {
       'cat-trabajo',
       'keep-tasks',
     );
+  });
+
+  it('should count total and completed tasks by category', () => {
+    const tasks: Task[] = [
+      {
+        id: '1',
+        title: 'T1',
+        completed: true,
+        categoryId: 'cat-trabajo',
+        createdAt: '2025-01-01',
+      },
+      {
+        id: '2',
+        title: 'T2',
+        completed: false,
+        categoryId: 'cat-trabajo',
+        createdAt: '2025-01-01',
+      },
+      {
+        id: '3',
+        title: 'T3',
+        completed: true,
+        categoryId: 'cat-otro',
+        createdAt: '2025-01-01',
+      },
+    ];
+    expect(component.countTasksByCategory(tasks, 'cat-trabajo')).toBe(2);
+    expect(
+      component.countCompletedTasksByCategory(tasks, 'cat-trabajo'),
+    ).toBe(1);
+  });
+
+  it('should toggle expandedCategoryId when onToggleCategory is called', () => {
+    expect(component.expandedCategoryId).toBeNull();
+
+    component.onToggleCategory('cat-trabajo');
+    expect(component.expandedCategoryId).toBe('cat-trabajo');
+
+    // Tapping the same category collapses it
+    component.onToggleCategory('cat-trabajo');
+    expect(component.expandedCategoryId).toBeNull();
+
+    // Tapping another category switches to it
+    component.onToggleCategory('cat-estudios');
+    expect(component.expandedCategoryId).toBe('cat-estudios');
+  });
+
+  it('should correctly identify expanded and pushed-down cards', () => {
+    const list: Category[] = [
+      { id: 'c1', name: 'C1', colorKey: 'trabajo', icon: 'paw-outline', createdAt: '' },
+      { id: 'c2', name: 'C2', colorKey: 'personal', icon: 'paw-outline', createdAt: '' },
+      { id: 'c3', name: 'C3', colorKey: 'estudios', icon: 'paw-outline', createdAt: '' },
+    ];
+
+    expect(component.isCardExpanded('c2')).toBeFalse();
+    expect(component.isCardPushedDown(list, 'c3')).toBeFalse();
+
+    component.onToggleCategory('c2');
+    expect(component.isCardExpanded('c2')).toBeTrue();
+    expect(component.isCardPushedDown(list, 'c1')).toBeFalse();
+    expect(component.isCardPushedDown(list, 'c2')).toBeFalse();
+    expect(component.isCardPushedDown(list, 'c3')).toBeTrue();
+  });
+
+  it('should navigate to tasks tab with queryParams when goToTasksByCategory is called', () => {
+    const router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
+
+    component.goToTasksByCategory('cat-trabajo');
+
+    expect(router.navigate).toHaveBeenCalledWith(['/tabs/tab1'], {
+      queryParams: { categoryId: 'cat-trabajo' },
+    });
   });
 });

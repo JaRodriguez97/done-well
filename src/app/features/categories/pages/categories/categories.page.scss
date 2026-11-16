@@ -1,6 +1,26 @@
+ion-content {
+  --background: var(--ion-background-color)
+    url('/assets/svg/bg-categories.svg') no-repeat center / cover;
+}
+
 .categories-page__container {
   margin: 0;
   width: 100%;
+  animation: pageSoftSpring 0.38s cubic-bezier(0.18, 0.89, 0.32, 1.12) both;
+}
+
+@keyframes pageSoftSpring {
+  0% {
+    opacity: 0.86;
+    transform: translateY(10px) scale(0.996);
+  }
+  70% {
+    transform: translateY(-2px) scale(1.001);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .categories-summary {
@@ -53,7 +73,28 @@
 .categories-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 0;
   background: transparent;
-  padding: 0;
+  padding: 36px 0 calc(var(--space-5) + 64px);
+  overflow: visible;
+  --ion-item-background: transparent;
+}
+
+.categories-list__item {
+  display: block;
+  position: relative;
+  overflow: visible;
+  transition: transform 0.3s cubic-bezier(0.25, 0.9, 0.25, 1);
+}
+
+.categories-list__item:not(:first-child) {
+  margin-top: -54px;
+}
+
+.categories-list__item--expanded {
+  transform: translateY(-14px);
+}
+
+.categories-list__item--pushed-down {
+  transform: translateY(58px);
 }

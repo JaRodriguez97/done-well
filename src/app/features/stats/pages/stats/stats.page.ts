@@ -24,8 +24,15 @@ import {
 import { addIcons } from 'ionicons';
 import {
   alertCircleOutline,
+  calendarOutline,
+  checkmarkDoneOutline,
+  flagOutline,
+  hourglassOutline,
+  listOutline,
   statsChartOutline,
   syncOutline,
+  timeOutline,
+  trendingUpOutline,
 } from 'ionicons/icons';
 import { combineLatest } from 'rxjs';
 import { CATEGORY_ICON_REGISTRY } from '../../../../core/constants/category.constants';
@@ -35,9 +42,13 @@ import {
 } from '../../../../core/models/category.model';
 import {
   CategoryStatItem,
+  DueDateTelemetry,
+  PriorityStatItem,
   StatsOverview,
+  StatusDistribution,
+  SubtasksTelemetry,
 } from '../../../../core/models/stats.model';
-import { Task } from '../../../../core/models/task.model';
+import { Task, TaskPriority } from '../../../../core/models/task.model';
 import { RemoteConfigService } from '../../../../core/services/remote-config.service';
 import { CategoriesService } from '../../../categories/services/categories.service';
 import { TasksService } from '../../../tasks/services/tasks.service';
@@ -90,6 +101,13 @@ export class StatsPage implements OnInit {
       statsChartOutline,
       syncOutline,
       alertCircleOutline,
+      flagOutline,
+      checkmarkDoneOutline,
+      timeOutline,
+      hourglassOutline,
+      listOutline,
+      calendarOutline,
+      trendingUpOutline,
     });
   }
 
@@ -163,6 +181,58 @@ export class StatsPage implements OnInit {
       );
     }
 
+    const priorityStats: PriorityStatItem[] = [
+      this.buildPriorityItem(tasks, 'high', 'Alta', '#FF7660'),
+      this.buildPriorityItem(tasks, 'medium', 'Media', '#FFCC00'),
+      this.buildPriorityItem(tasks, 'low', 'Baja', '#40E0D0'),
+    ];
+
+    const statusPending = tasks.filter(
+      (task) => (task.status ?? 'pending') === 'pending',
+    ).length;
+    const statusInProgress = tasks.filter(
+      (task) => task.status === 'in_progress',
+    ).length;
+    const statusCompleted = tasks.filter(
+      (task) => task.completed || task.status === 'completed',
+    ).length;
+
+    const statusDistribution: StatusDistribution = {
+      pending: statusPending,
+      inProgress: statusInProgress,
+      completed: statusCompleted,
+      pendingRatio: totalTasks > 0 ? statusPending / totalTasks : 0,
+      inProgressRatio: totalTasks > 0 ? statusInProgress / totalTasks : 0,
+      completedRatio: totalTasks > 0 ? statusCompleted / totalTasks : 0,
+    };
+
+    const allSubtasks = tasks.flatMap((t) => t.subtasks ?? []);
+    const subtasksTotal = allSubtasks.length;
+    const subtasksCompleted = allSubtasks.filter((s) => s.completed).length;
+    const subtasksTelemetry: SubtasksTelemetry = {
+      total: subtasksTotal,
+      completed: subtasksCompleted,
+      pending: subtasksTotal - subtasksCompleted,
+      completionPercent:
+        subtasksTotal > 0
+          ? Math.round((subtasksCompleted / subtasksTotal) * 100)
+          : 0,
+    };
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const tasksWithDueDate = tasks.filter((t) => !!t.dueDate);
+    const overdueTasks = tasks.filter(
+      (t) => !t.completed && !!t.dueDate && t.dueDate < todayStr,
+    ).length;
+    const onTrackTasks = tasksWithDueDate.length - overdueTasks;
+
+    const dueDateTelemetry: DueDateTelemetry = {
+      withDueDate: tasksWithDueDate.length,
+      overdue: overdueTasks,
+      onTrack: onTrackTasks,
+      noDueDate: totalTasks - tasksWithDueDate.length,
+    };
+
     return {
       totalTasks,
       completedTasks,
@@ -170,6 +240,33 @@ export class StatsPage implements OnInit {
       completionRatio,
       completionPercent,
       categoryStats,
+      priorityStats,
+      statusDistribution,
+      subtasksTelemetry,
+      dueDateTelemetry,
+    };
+  }
+
+  private buildPriorityItem(
+    tasks: Task[],
+    priority: TaskPriority,
+    label: string,
+    colorHex: string,
+  ): PriorityStatItem {
+    const scoped = tasks.filter((task) => task.priority === priority);
+    const total = scoped.length;
+    const completed = scoped.filter((task) => task.completed).length;
+    const completionPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const shareOfTotal = tasks.length > 0 ? total / tasks.length : 0;
+
+    return {
+      priority,
+      label,
+      colorHex,
+      total,
+      completed,
+      completionPercent,
+      shareOfTotal,
     };
   }
 

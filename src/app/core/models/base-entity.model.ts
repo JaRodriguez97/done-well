@@ -7,7 +7,7 @@ export abstract class BaseEntity<T> implements IdentifiableEntity {
   readonly id: string;
   readonly createdAt: string;
 
-  protected constructor(id?: string, createdAt?: string) {
+  constructor(id?: string, createdAt?: string) {
     this.id = id ?? BaseEntity.generateId();
     this.createdAt = createdAt ?? new Date().toISOString();
   }

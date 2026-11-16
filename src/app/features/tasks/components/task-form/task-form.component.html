@@ -6,13 +6,189 @@
           class="task-form__input"
           type="text"
           [formControl]="titleControl"
-          placeholder="¿Qué necesitas hacer hoy?"
+          placeholder="¿Qué necesitas hacer?"
           aria-label="Título de la nueva tarea"
           maxlength="120"
           (ionInput)="clearValidationError()"
           (keyup.enter)="onSubmit()"
         ></ion-input>
       </ion-item>
+
+      <ion-item lines="none" class="task-form__field">
+        <ion-textarea
+          class="task-form__input task-form__textarea"
+          [formControl]="descriptionControl"
+          rows="2"
+          placeholder="Descripción o notas (opcional)"
+          aria-label="Descripción de la tarea"
+          maxlength="300"
+        ></ion-textarea>
+      </ion-item>
+
+      <ion-text class="dw-text-muted task-form__section-label">
+        Prioridad
+      </ion-text>
+
+      <ion-list
+        lines="none"
+        class="task-form__chips"
+        role="radiogroup"
+        aria-label="Prioridad de la tarea"
+      >
+        @for (option of priorityOptions; track option.key) {
+          <ion-chip
+            class="dw-touch-target task-form__option-chip"
+            [class.task-form__chip--selected]="
+              priorityControl.value === option.key
+            "
+            [style.--dw-chip-accent]="option.cssVar"
+            role="radio"
+            tabindex="0"
+            [attr.aria-checked]="priorityControl.value === option.key"
+            [attr.aria-label]="'Prioridad ' + option.label"
+            (click)="selectPriority(option.key)"
+            (keydown.enter)="selectPriority(option.key)"
+          >
+            <ion-icon
+              [name]="option.icon"
+              [style.color]="option.cssVar"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-label>{{ option.label }}</ion-label>
+          </ion-chip>
+        }
+      </ion-list>
+
+      <ion-text class="dw-text-muted task-form__section-label">
+        Estado
+      </ion-text>
+
+      <ion-list
+        lines="none"
+        class="task-form__chips"
+        role="radiogroup"
+        aria-label="Estado de la tarea"
+      >
+        @for (option of statusOptions; track option.key) {
+          <ion-chip
+            class="dw-touch-target task-form__option-chip"
+            [class.task-form__chip--selected]="
+              statusControl.value === option.key
+            "
+            [style.--dw-chip-accent]="option.cssVar"
+            role="radio"
+            tabindex="0"
+            [attr.aria-checked]="statusControl.value === option.key"
+            [attr.aria-label]="'Estado ' + option.label"
+            (click)="selectStatus(option.key)"
+            (keydown.enter)="selectStatus(option.key)"
+          >
+            <ion-icon
+              [name]="option.icon"
+              [style.color]="option.cssVar"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-label>{{ option.label }}</ion-label>
+          </ion-chip>
+        }
+      </ion-list>
+
+      <ion-row class="task-form__dates">
+        <ion-col size="6" class="task-form__date-col">
+          <ion-text class="dw-text-muted task-form__date-label">
+            Inicio
+          </ion-text>
+          <ion-input
+            class="task-form__input task-form__date-input"
+            type="date"
+            [formControl]="startDateControl"
+            aria-label="Fecha inicial"
+            (ionInput)="clearValidationError()"
+          ></ion-input>
+        </ion-col>
+
+        <ion-col size="6" class="task-form__date-col">
+          <ion-text class="dw-text-muted task-form__date-label">
+            Límite
+          </ion-text>
+          <ion-input
+            class="task-form__input task-form__date-input"
+            type="date"
+            [formControl]="dueDateControl"
+            aria-label="Fecha límite"
+            (ionInput)="clearValidationError()"
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+
+      <ion-text class="dw-text-muted task-form__section-label">
+        Microtareas (opcional)
+      </ion-text>
+
+      <ion-item lines="none" class="task-form__field">
+        <ion-input
+          class="task-form__input"
+          type="text"
+          [formControl]="subtaskInputControl"
+          placeholder="Agregar paso o microtarea..."
+          aria-label="Nueva microtarea"
+          maxlength="90"
+          (keyup.enter)="addSubtask()"
+        ></ion-input>
+        <ion-button
+          slot="end"
+          type="button"
+          fill="clear"
+          color="secondary"
+          class="dw-touch-target task-form__subtask-add"
+          [disabled]="disabled"
+          aria-label="Añadir microtarea"
+          (click)="addSubtask()"
+        >
+          <ion-icon
+            slot="icon-only"
+            name="add-circle-outline"
+            aria-hidden="true"
+          ></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      @if (subtasks.length > 0) {
+        <ion-list
+          lines="none"
+          class="task-form__subtasks"
+          aria-label="Microtareas"
+        >
+          @for (subtask of subtasks; track subtask.id) {
+            <ion-item lines="none" class="task-form__subtask-item">
+              <ion-icon
+                slot="start"
+                name="list-outline"
+                color="secondary"
+                aria-hidden="true"
+              ></ion-icon>
+              <ion-label class="task-form__subtask-label">
+                {{ subtask.title }}
+              </ion-label>
+              <ion-button
+                slot="end"
+                type="button"
+                fill="clear"
+                color="danger"
+                class="dw-touch-target task-form__subtask-remove"
+                [attr.aria-label]="'Quitar microtarea ' + subtask.title"
+                (click)="removeSubtask(subtask.id)"
+              >
+                <ion-icon
+                  slot="icon-only"
+                  name="close-circle-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+              </ion-button>
+            </ion-item>
+          }
+        </ion-list>
+      }
 
       <ion-text class="dw-text-muted task-form__section-label">
         Categoría
@@ -63,7 +239,11 @@
       </ion-list>
 
       @if (validationError) {
-        <ion-item lines="none" class="dw-error-box task-form__error" role="alert">
+        <ion-item
+          lines="none"
+          class="dw-error-box task-form__error"
+          role="alert"
+        >
           <ion-icon
             slot="start"
             name="alert-circle-outline"
@@ -78,15 +258,15 @@
         expand="block"
         class="btn-primary task-form__submit"
         [disabled]="disabled"
-        aria-label="Agregar tarea"
+        [attr.aria-label]="isEditMode ? 'Guardar cambios de la tarea' : 'Agregar tarea'"
         (click)="onSubmit()"
       >
         <ion-icon
           slot="start"
-          name="add-circle-outline"
+          [name]="isEditMode ? 'checkmark-circle-outline' : 'add-circle-outline'"
           aria-hidden="true"
         ></ion-icon>
-        Agregar
+        {{ isEditMode ? 'Guardar cambios' : 'Agregar' }}
       </ion-button>
     </ion-grid>
   </ion-card-content>

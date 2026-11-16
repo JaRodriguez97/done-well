@@ -66,10 +66,23 @@
           class="categories-list"
           aria-label="Lista de categorías"
         >
-          @for (category of state.categories; track category.id) {
+          @for (category of state.categories; track category.id; let i = $index) {
             <app-category-item
+              class="categories-list__item"
+              [class.categories-list__item--expanded]="isCardExpanded(category.id)"
+              [class.categories-list__item--pushed-down]="
+                isCardPushedDown(state.categories, category.id)
+              "
+              [style.z-index]="isCardExpanded(category.id) ? 30 : i + 1"
               [category]="category"
               [taskCount]="countTasksByCategory(state.tasks, category.id)"
+              [completedTaskCount]="
+                countCompletedTasksByCategory(state.tasks, category.id)
+              "
+              [isExpanded]="isCardExpanded(category.id)"
+              [isLast]="i === state.categories.length - 1"
+              (toggleRequested)="onToggleCategory(category.id)"
+              (viewTasksRequested)="goToTasksByCategory(category.id)"
               (editRequested)="onStartEdit($event)"
               (deleteRequested)="confirmDeleteCategory($event, state.tasks)"
             ></app-category-item>

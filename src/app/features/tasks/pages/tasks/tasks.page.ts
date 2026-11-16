@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   AlertController,
   IonButton,
@@ -15,6 +16,7 @@ import {
   IonList,
   IonModal,
   IonRow,
+  IonSearchbar,
   IonSpinner,
   IonText,
   IonTitle,
@@ -27,10 +29,15 @@ import {
   checkmarkDoneCircleOutline,
   closeOutline,
   filterOutline,
+  searchOutline,
 } from 'ionicons/icons';
 import { combineLatest } from 'rxjs';
 import { Category } from '../../../../core/models/category.model';
-import { Task, TaskPayload } from '../../../../core/models/task.model';
+import {
+  Task,
+  TaskPayload,
+  TaskStatus,
+} from '../../../../core/models/task.model';
 import { CategoriesService } from '../../../categories/services/categories.service';
 import {
   TaskCategoryFilterComponent,
@@ -61,6 +68,7 @@ import { TasksService } from '../../services/tasks.service';
     IonButton,
     IonButtons,
     IonModal,
+    IonSearchbar,
     IonSpinner,
     IonIcon,
     IonText,
@@ -78,12 +86,15 @@ export class TasksPage implements OnInit {
   isLoading = true;
   errorMessage: string | null = null;
   selectedFilter: TaskFilterValue = 'all';
+  searchQuery = '';
   isCreateModalOpen = false;
+  taskToEdit: Task | null = null;
 
   constructor(
     private readonly tasksService: TasksService,
     private readonly categoriesService: CategoriesService,
     private readonly alertController: AlertController,
+    private readonly route: ActivatedRoute,
   ) {
     addIcons({
       checkmarkDoneCircleOutline,
@@ -91,11 +102,25 @@ export class TasksPage implements OnInit {
       filterOutline,
       addCircleOutline,
       closeOutline,
+      searchOutline,
     });
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      const categoryId = params.get('categoryId');
+      if (categoryId) {
+        this.selectedFilter = categoryId;
+      }
+    });
     void this.initializeTasks();
+  }
+
+  ionViewWillEnter(): void {
+    const categoryId = this.route.snapshot.queryParamMap.get('categoryId');
+    if (categoryId) {
+      this.selectedFilter = categoryId;
+    }
   }
 
   /**
@@ -121,23 +146,46 @@ export class TasksPage implements OnInit {
    */
   openCreateTaskModal(): void {
     this.errorMessage = null;
+    this.taskToEdit = null;
     this.isCreateModalOpen = true;
   }
 
   /**
-   * Cierra el modal de creación de tareas.
+   * Abre el modal para editar una tarea existente.
    */
-  closeCreateTaskModal(): void {
-    this.isCreateModalOpen = false;
+  openEditTaskModal(task: Task): void {
+    this.errorMessage = null;
+    this.taskToEdit = task;
+    this.isCreateModalOpen = true;
   }
 
   /**
-   * Crea una nueva tarea con su título y categoría asignada.
+   * Cierra el modal de creación o edición de tareas.
    */
-  async onCreateTask(payload: TaskPayload): Promise<void> {
+  closeCreateTaskModal(): void {
+    this.isCreateModalOpen = false;
+    this.taskToEdit = null;
+  }
+
+  /**
+   * Guarda una tarea (creación o edición) con su título, categoría y detalles.
+   */
+  async onSaveTask(payload: TaskPayload): Promise<void> {
     this.errorMessage = null;
     try {
-      await this.tasksService.addTask(payload.title, payload.categoryId);
+      if (this.taskToEdit) {
+        await this.tasksService.updateTask(this.taskToEdit.id, payload);
+      } else {
+        const { title, categoryId, ...details } = payload;
+        const hasDetails = Object.values(details).some(
+          (value) => value !== undefined,
+        );
+        if (hasDetails) {
+          await this.tasksService.addTask(title, categoryId, details);
+        } else {
+          await this.tasksService.addTask(title, categoryId);
+        }
+      }
       this.closeCreateTaskModal();
     } catch (error) {
       this.errorMessage =
@@ -145,13 +193,38 @@ export class TasksPage implements OnInit {
     }
   }
 
+  /**
+   * Crea una nueva tarea (mantenido para retrocompatibilidad).
+   */
+  async onCreateTask(payload: TaskPayload): Promise<void> {
+    await this.onSaveTask(payload);
+  }
+
   async onToggleTask(taskId: string): Promise<void> {
-    this.errorMessage = null;
-    try {
-      await this.tasksService.toggleTask(taskId);
-    } catch {
-      this.errorMessage = 'No se pudo actualizar el estado de la tarea.';
-    }
+    await this.runTaskAction(
+      () => this.tasksService.toggleTask(taskId),
+      'No se pudo actualizar el estado de la tarea.',
+    );
+  }
+
+  async onStatusChange(event: {
+    taskId: string;
+    status: TaskStatus;
+  }): Promise<void> {
+    await this.runTaskAction(
+      () => this.tasksService.updateTaskStatus(event.taskId, event.status),
+      'No se pudo actualizar el estado de la tarea.',
+    );
+  }
+
+  async onSubtaskToggle(event: {
+    taskId: string;
+    subtaskId: string;
+  }): Promise<void> {
+    await this.runTaskAction(
+      () => this.tasksService.toggleSubtask(event.taskId, event.subtaskId),
+      'No se pudo actualizar la microtarea.',
+    );
   }
 
   /**
@@ -178,11 +251,21 @@ export class TasksPage implements OnInit {
   }
 
   async onDeleteTask(taskId: string): Promise<void> {
+    await this.runTaskAction(
+      () => this.tasksService.deleteTask(taskId),
+      'No se pudo eliminar la tarea.',
+    );
+  }
+
+  private async runTaskAction(
+    action: () => Promise<void>,
+    fallbackMessage: string,
+  ): Promise<void> {
     this.errorMessage = null;
     try {
-      await this.tasksService.deleteTask(taskId);
+      await action();
     } catch {
-      this.errorMessage = 'No se pudo eliminar la tarea.';
+      this.errorMessage = fallbackMessage;
     }
   }
 
@@ -197,7 +280,10 @@ export class TasksPage implements OnInit {
    * Restablece el filtro a todas las tareas si la categoría filtrada fue eliminada.
    */
   resolveActiveFilter(categories: Category[]): TaskFilterValue {
-    if (this.selectedFilter === 'all' || this.selectedFilter === 'uncategorized') {
+    if (
+      this.selectedFilter === 'all' ||
+      this.selectedFilter === 'uncategorized'
+    ) {
       return this.selectedFilter;
     }
     const categoryExists = categories.some(
@@ -206,21 +292,50 @@ export class TasksPage implements OnInit {
     return categoryExists ? this.selectedFilter : 'all';
   }
 
+  onSearchInput(event: CustomEvent<{ value?: string | null }>): void {
+    this.searchQuery = event.detail.value ?? '';
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+  }
+
   /**
-   * Retorna las tareas visibles según el filtro de categoría seleccionado.
+   * Retorna las tareas visibles según el filtro de categoría y el término de búsqueda.
    */
   filterTasks(tasks: Task[], categories: Category[]): Task[] {
     const activeFilter = this.resolveActiveFilter(categories);
+    let filtered: Task[];
+
     if (activeFilter === 'all') {
-      return tasks;
+      filtered = tasks;
+    } else if (activeFilter === 'uncategorized') {
+      filtered = tasks.filter((task) => task.categoryId === null);
+    } else {
+      filtered = tasks.filter((task) => task.categoryId === activeFilter);
     }
-    if (activeFilter === 'uncategorized') {
-      return tasks.filter((task) => task.categoryId === null);
+
+    const query = this.searchQuery.trim().toLowerCase();
+    if (!query) {
+      return filtered;
     }
-    return tasks.filter((task) => task.categoryId === activeFilter);
+
+    return filtered.filter((task) => {
+      const matchTitle = task.title.toLowerCase().includes(query);
+      const matchDescription = (task.description ?? '')
+        .toLowerCase()
+        .includes(query);
+      const matchSubtasks = (task.subtasks ?? []).some((sub) =>
+        sub.title.toLowerCase().includes(query),
+      );
+      return matchTitle || matchDescription || matchSubtasks;
+    });
   }
 
-  findCategory(categories: Category[], categoryId: string | null): Category | null {
+  findCategory(
+    categories: Category[],
+    categoryId: string | null,
+  ): Category | null {
     if (!categoryId) {
       return null;
     }

@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   AlertController,
   AlertButton,
@@ -76,11 +77,13 @@ export class CategoriesPage implements OnInit {
   errorMessage: string | null = null;
   editingCategory: Category | null = null;
   isFormModalOpen = false;
+  expandedCategoryId: string | null = null;
 
   constructor(
     private readonly categoriesService: CategoriesService,
     private readonly tasksService: TasksService,
     private readonly alertController: AlertController,
+    private readonly router: Router,
   ) {
     addIcons({
       pricetagsOutline,
@@ -217,12 +220,47 @@ export class CategoriesPage implements OnInit {
       if (this.editingCategory?.id === categoryId) {
         this.editingCategory = null;
       }
+      if (this.expandedCategoryId === categoryId) {
+        this.expandedCategoryId = null;
+      }
     } catch {
       this.errorMessage = 'No se pudo eliminar la categoría.';
     }
   }
 
+  onToggleCategory(categoryId: string): void {
+    this.expandedCategoryId =
+      this.expandedCategoryId === categoryId ? null : categoryId;
+  }
+
+  isCardExpanded(categoryId: string): boolean {
+    return this.expandedCategoryId === categoryId;
+  }
+
+  isCardPushedDown(categories: Category[], currentId: string): boolean {
+    if (!this.expandedCategoryId) {
+      return false;
+    }
+    const expandedIdx = categories.findIndex(
+      (c) => c.id === this.expandedCategoryId,
+    );
+    const currentIdx = categories.findIndex((c) => c.id === currentId);
+    return expandedIdx !== -1 && currentIdx > expandedIdx;
+  }
+
+  goToTasksByCategory(categoryId: string): void {
+    void this.router.navigate(['/tabs/tab1'], {
+      queryParams: { categoryId },
+    });
+  }
+
   countTasksByCategory(tasks: Task[], categoryId: string): number {
     return tasks.filter((task) => task.categoryId === categoryId).length;
+  }
+
+  countCompletedTasksByCategory(tasks: Task[], categoryId: string): number {
+    return tasks.filter(
+      (task) => task.categoryId === categoryId && task.completed,
+    ).length;
   }
 }
