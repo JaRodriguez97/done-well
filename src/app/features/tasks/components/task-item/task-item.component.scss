@@ -64,8 +64,8 @@
 }
 
 .task-item__chip--overdue {
-  border-color: var(--color-urgente);
-  --color: var(--color-urgente);
+  border-color: var(--dw-color-coral);
+  --color: var(--dw-color-coral);
 }
 
 .task-item__chip-label {
@@ -137,7 +137,7 @@
 
 .task-item__dates-row--overdue {
   ion-icon {
-    color: var(--color-urgente, #ff5252);
+    color: var(--dw-color-coral, #ff7660);
   }
 }
 
@@ -145,9 +145,9 @@
   display: inline-block;
   padding: 1px 6px;
   border-radius: 4px;
-  background: rgba(255, 82, 82, 0.18);
-  border: 1px solid var(--color-urgente, #ff5252);
-  color: var(--color-urgente, #ff5252);
+  background: rgba(255, 118, 96, 0.18);
+  border: 1px solid var(--dw-color-coral, #ff7660);
+  color: var(--dw-color-coral, #ff7660);
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -230,5 +230,5 @@
 }
 
 .task-item__action-btn--delete {
-  --color: var(--color-urgente, #ff5252);
+  --color: var(--dw-color-coral, #ff7660);
 }

@@ -104,13 +104,13 @@ describe('StorageService', () => {
     it('should validate category name and serialize to plain object', () => {
       const category = new CategoryItem({
         name: '   Deporte ',
-        colorKey: 'personal',
+        colorKey: 'turquesa',
         icon: 'fitness-outline',
       });
 
       const plain = category.toPlainObject();
       expect(plain.name).toBe('Deporte');
-      expect(plain.colorKey).toBe('personal');
+      expect(plain.colorKey).toBe('turquesa');
       expect(() => {
         category.name = ' ';
       }).toThrowError('El nombre de la categoría no puede estar vacío.');
@@ -119,18 +119,18 @@ describe('StorageService', () => {
     it('should update editable category properties and reject empty name', () => {
       const category = new CategoryItem({
         name: 'Trabajo',
-        colorKey: 'trabajo',
+        colorKey: 'violeta',
         icon: 'briefcase-outline',
       });
 
       category.update({
         name: '  Oficina  ',
-        colorKey: 'urgente',
+        colorKey: 'coral',
         icon: 'flame-outline',
       });
 
       expect(category.name).toBe('Oficina');
-      expect(category.colorKey).toBe('urgente');
+      expect(category.colorKey).toBe('coral');
       expect(category.icon).toBe('flame-outline');
       expect(() => category.update({ name: '   ' })).toThrowError(
         'El nombre de la categoría no puede estar vacío.'

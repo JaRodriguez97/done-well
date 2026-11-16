@@ -64,13 +64,19 @@
   --ion-toolbar-background: var(--ion-background-color);
   --ion-toolbar-color: var(--ion-text-color);
 
-  /* Colores de categorías (solo para acentos laterales, chips e íconos) */
-  --color-trabajo: #7567F8;
-  --color-personal: #40E0D0;
-  --color-estudios: #6798FF;
-  --color-compras: #FFCC00;
-  --color-urgente: #FF7660;
-  --color-otros: #667499;
+  /* Tokens cromáticos semánticos DoneWell */
+  --dw-color-violeta: #7567F8;
+  --dw-color-turquesa: #40E0D0;
+  --dw-color-azul: #6798FF;
+  --dw-color-ambar: #FFCC00;
+  --dw-color-coral: #FF7660;
+  --dw-color-pizarra: #667499;
+  --dw-color-esmeralda: #10B981;
+  --dw-color-rosa: #F43F5E;
+  --dw-color-indigo: #6366F1;
+  --dw-color-celeste: #0EA5E9;
+  --dw-color-fucsia: #D946EF;
+  --dw-color-lavanda: #A99EFF;
 
   /* Tipografía global y escala de tamaños */
   --ion-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, sans-serif;

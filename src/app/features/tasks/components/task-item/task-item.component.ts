@@ -97,7 +97,7 @@ export class TaskItemComponent {
   }
 
   get borderClass(): string {
-    return `dw-border-${this.category?.colorKey ?? 'otros'}`;
+    return `dw-border-${this.category?.colorKey ?? 'pizarra'}`;
   }
 
   get resolvedStatus(): TaskStatus {

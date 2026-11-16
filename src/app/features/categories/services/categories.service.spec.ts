@@ -65,7 +65,7 @@ describe('CategoriesService', () => {
       {
         id: 'cat-custom',
         name: '  Salud  ',
-        colorKey: 'personal',
+        colorKey: 'turquesa',
         icon: 'person-outline',
         createdAt: '2025-01-01T00:00:00.000Z',
       },
@@ -83,12 +83,12 @@ describe('CategoriesService', () => {
   it('should create a category with chosen or default icon and persist', async () => {
     const created = await service.addCategory({
       name: '  Finanzas  ',
-      colorKey: 'compras',
+      colorKey: 'ambar',
       icon: 'wallet-outline',
     });
     const withFallback = await service.addCategory({
       name: 'General',
-      colorKey: 'otros',
+      colorKey: 'pizarra',
     });
     const current = await firstValueFrom(service.categories$);
 
@@ -101,7 +101,7 @@ describe('CategoriesService', () => {
 
   it('should reject creating a category with empty name', async () => {
     await expectAsync(
-      service.addCategory({ name: '   ', colorKey: 'trabajo' }),
+      service.addCategory({ name: '   ', colorKey: 'violeta' }),
     ).toBeRejectedWithError('El nombre de la categoría no puede estar vacío.');
     expect(storageSpy.set).not.toHaveBeenCalled();
   });
@@ -109,19 +109,19 @@ describe('CategoriesService', () => {
   it('should update color without overwriting existing icon unless specified', async () => {
     const created = await service.addCategory({
       name: 'Gym',
-      colorKey: 'personal',
+      colorKey: 'turquesa',
       icon: 'fitness-outline',
     });
     storageSpy.set.calls.reset();
 
     await service.updateCategory(created.id, {
       name: 'Bienestar',
-      colorKey: 'estudios',
+      colorKey: 'azul',
     });
     const current = await firstValueFrom(service.categories$);
 
     expect(current[0].name).toBe('Bienestar');
-    expect(current[0].colorKey).toBe('estudios');
+    expect(current[0].colorKey).toBe('azul');
     expect(current[0].icon).toBe('fitness-outline');
     expect(storageSpy.set).toHaveBeenCalledOnceWith(
       STORAGE_KEYS.CATEGORIES,
@@ -132,7 +132,7 @@ describe('CategoriesService', () => {
   it('should clear category references on tasks when strategy is keep-tasks', async () => {
     const created = await service.addCategory({
       name: 'Temporal',
-      colorKey: 'otros',
+      colorKey: 'pizarra',
     });
     storageSpy.set.calls.reset();
 
@@ -150,7 +150,7 @@ describe('CategoriesService', () => {
   it('should delete associated tasks when strategy is delete-tasks', async () => {
     const created = await service.addCategory({
       name: 'Temporal',
-      colorKey: 'urgente',
+      colorKey: 'coral',
     });
     storageSpy.set.calls.reset();
 

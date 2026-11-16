@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Category } from '../../../../core/models/category.model';
+import { createMockCategory, createMockTask } from '../../../../core/testing/test-fixtures';
 import { TaskItemComponent } from './task-item.component';
 
 describe('TaskItemComponent', () => {
   let component: TaskItemComponent;
   let fixture: ComponentFixture<TaskItemComponent>;
 
-  const sampleCategory: Category = {
+  const sampleCategory = createMockCategory({
     id: 'cat-trabajo',
     name: 'Trabajo',
-    colorKey: 'trabajo',
+    colorKey: 'violeta',
     icon: 'briefcase-outline',
-    createdAt: '2025-01-01T00:00:00.000Z',
-  };
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -21,7 +20,7 @@ describe('TaskItemComponent', () => {
 
     fixture = TestBed.createComponent(TaskItemComponent);
     component = fixture.componentInstance;
-    component.task = {
+    component.task = createMockTask({
       id: 'task-10',
       title: 'Revisar código',
       completed: false,
@@ -35,23 +34,22 @@ describe('TaskItemComponent', () => {
       ],
       startDate: '2026-11-16',
       dueDate: '2026-11-20',
-      createdAt: '2025-01-01T00:00:00.000Z',
-    };
+    });
     component.category = sampleCategory;
     fixture.detectChanges();
   });
 
   it('should create and compute category border class', () => {
     expect(component).toBeTruthy();
-    expect(component.borderClass).toBe('dw-border-trabajo');
+    expect(component.borderClass).toBe('dw-border-violeta');
     expect(component.priorityOption.label).toBe('Alta');
     expect(component.completedSubtasksCount).toBe(1);
     expect(component.totalSubtasksCount).toBe(2);
   });
 
-  it('should fallback border class to otros when category is null', () => {
+  it('should fallback border class to pizarra when category is null', () => {
     component.category = null;
-    expect(component.borderClass).toBe('dw-border-otros');
+    expect(component.borderClass).toBe('dw-border-pizarra');
   });
 
   it('should emit task id when toggled', () => {

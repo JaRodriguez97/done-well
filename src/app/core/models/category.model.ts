@@ -1,12 +1,19 @@
 import { BaseEntity, IdentifiableEntity } from './base-entity.model';
+import { validateRequiredText } from '../utils/entity.utils';
 
 export type CategoryColorKey =
-  | 'trabajo'
-  | 'personal'
-  | 'estudios'
-  | 'compras'
-  | 'urgente'
-  | 'otros';
+  | 'violeta'
+  | 'turquesa'
+  | 'azul'
+  | 'ambar'
+  | 'coral'
+  | 'pizarra'
+  | 'esmeralda'
+  | 'rosa'
+  | 'indigo'
+  | 'celeste'
+  | 'fucsia'
+  | 'lavanda';
 
 export interface CategoryPayload {
   name: string;
@@ -16,6 +23,11 @@ export interface CategoryPayload {
 
 export interface Category extends IdentifiableEntity, CategoryPayload {
   icon: string;
+}
+
+export interface CategoryWithStats extends Category {
+  readonly taskCount: number;
+  readonly completedTaskCount: number;
 }
 
 export interface CreateCategoryParams extends Partial<Category> {
@@ -31,8 +43,8 @@ export class CategoryItem extends BaseEntity<Category> implements Category {
 
   constructor(params: CreateCategoryParams) {
     super(params.id, params.createdAt);
-    this._name = BaseEntity.validateRequiredText(params.name, CategoryItem.EMPTY_NAME_ERROR);
-    this.colorKey = params.colorKey ?? 'otros';
+    this._name = validateRequiredText(params.name, CategoryItem.EMPTY_NAME_ERROR);
+    this.colorKey = params.colorKey ?? 'pizarra';
     this.icon = params.icon ?? 'pricetag-outline';
   }
 
@@ -41,7 +53,7 @@ export class CategoryItem extends BaseEntity<Category> implements Category {
   }
 
   set name(value: string) {
-    this._name = BaseEntity.validateRequiredText(value, CategoryItem.EMPTY_NAME_ERROR);
+    this._name = validateRequiredText(value, CategoryItem.EMPTY_NAME_ERROR);
   }
 
   /**

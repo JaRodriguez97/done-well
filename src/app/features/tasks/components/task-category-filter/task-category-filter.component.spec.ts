@@ -11,14 +11,14 @@ describe('TaskCategoryFilterComponent', () => {
     {
       id: 'cat-trabajo',
       name: 'Trabajo',
-      colorKey: 'trabajo',
+      colorKey: 'violeta',
       icon: 'briefcase-outline',
       createdAt: '2025-01-01T00:00:00.000Z',
     },
     {
       id: 'cat-compras',
       name: 'Compras',
-      colorKey: 'compras',
+      colorKey: 'ambar',
       icon: 'cart-outline',
       createdAt: '2025-01-01T00:00:00.000Z',
     },

@@ -1,4 +1,6 @@
 import { BaseEntity, IdentifiableEntity } from './base-entity.model';
+import { Category } from './category.model';
+import { generateEntityId, validateRequiredText } from '../utils/entity.utils';
 
 export type TaskPriority = 'low' | 'medium' | 'high';
 export type TaskStatus = 'pending' | 'in_progress' | 'completed';
@@ -24,6 +26,11 @@ export interface Task extends IdentifiableEntity, TaskPayload {
   completed: boolean;
 }
 
+export interface TaskWithCategory {
+  readonly task: Task;
+  readonly category: Category | null;
+}
+
 export interface CreateTaskParams extends Partial<Task> {
   title: string;
 }
@@ -44,7 +51,7 @@ export class TaskItem extends BaseEntity<Task> implements Task {
 
   constructor(params: CreateTaskParams) {
     super(params.id, params.createdAt);
-    this._title = BaseEntity.validateRequiredText(
+    this._title = validateRequiredText(
       params.title,
       TaskItem.EMPTY_TITLE_ERROR,
     );
@@ -65,7 +72,7 @@ export class TaskItem extends BaseEntity<Task> implements Task {
     this.description = (params.description ?? '').trim();
     this.subtasks = (params.subtasks ?? [])
       .map((item) => ({
-        id: item.id || BaseEntity.generateId(),
+        id: item.id || generateEntityId(),
         title: item.title.trim(),
         completed: Boolean(item.completed),
       }))
@@ -79,7 +86,7 @@ export class TaskItem extends BaseEntity<Task> implements Task {
   }
 
   set title(value: string) {
-    this._title = BaseEntity.validateRequiredText(
+    this._title = validateRequiredText(
       value,
       TaskItem.EMPTY_TITLE_ERROR,
     );
@@ -140,7 +147,7 @@ export class TaskItem extends BaseEntity<Task> implements Task {
     if (payload.subtasks !== undefined) {
       this.subtasks = payload.subtasks
         .map((item) => ({
-          id: item.id || BaseEntity.generateId(),
+          id: item.id || generateEntityId(),
           title: item.title.trim(),
           completed: Boolean(item.completed),
         }))

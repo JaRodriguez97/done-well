@@ -68,7 +68,7 @@
             [class.category-form__chip--selected]="
               selectedIcon === iconOption.name
             "
-            [style.--dw-chip-accent]="'var(--color-' + selectedColorKey + ')'"
+            [style.--dw-chip-accent]="'var(--dw-color-' + selectedColorKey + ')'"
             role="radio"
             tabindex="0"
             [attr.aria-checked]="selectedIcon === iconOption.name"
@@ -78,7 +78,7 @@
           >
             <ion-icon
               [name]="iconOption.name"
-              [style.color]="'var(--color-' + selectedColorKey + ')'"
+              [style.color]="'var(--dw-color-' + selectedColorKey + ')'"
               aria-hidden="true"
             ></ion-icon>
           </ion-chip>

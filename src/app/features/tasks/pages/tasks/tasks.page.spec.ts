@@ -4,6 +4,7 @@ import { AlertButton, AlertController } from '@ionic/angular/standalone';
 import { BehaviorSubject } from 'rxjs';
 import { Category } from '../../../../core/models/category.model';
 import { Task } from '../../../../core/models/task.model';
+import { createMockCategory, createMockTask } from '../../../../core/testing/test-fixtures';
 import { CategoriesService } from '../../../categories/services/categories.service';
 import { TasksService } from '../../services/tasks.service';
 import { TasksPage } from './tasks.page';
@@ -18,21 +19,19 @@ describe('TasksPage', () => {
   let alertControllerSpy: jasmine.SpyObj<AlertController>;
   let alertElementSpy: jasmine.SpyObj<HTMLIonAlertElement>;
 
-  const sampleCategory: Category = {
+  const sampleCategory: Category = createMockCategory({
     id: 'cat-trabajo',
     name: 'Trabajo',
-    colorKey: 'trabajo',
+    colorKey: 'violeta',
     icon: 'briefcase-outline',
-    createdAt: '2025-01-01T00:00:00.000Z',
-  };
+  });
 
-  const sampleTask: Task = {
+  const sampleTask: Task = createMockTask({
     id: 'task-1',
     title: 'Enviar reporte',
     completed: false,
     categoryId: 'cat-trabajo',
-    createdAt: '2025-01-01T00:00:00.000Z',
-  };
+  });
 
   beforeEach(async () => {
     tasksSubject = new BehaviorSubject<Task[]>([]);

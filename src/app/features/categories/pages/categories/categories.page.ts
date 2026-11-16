@@ -28,6 +28,7 @@ import {
   pricetagsOutline,
 } from 'ionicons/icons';
 import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   Category,
   CategoryPayload,
@@ -71,7 +72,17 @@ export class CategoriesPage implements OnInit {
   readonly viewState$ = combineLatest({
     categories: this.categoriesService.categories$,
     tasks: this.tasksService.tasks$,
-  });
+  }).pipe(
+    map(({ categories, tasks }) => ({
+      rawCategories: categories,
+      tasks,
+      categories: categories.map((cat) => ({
+        ...cat,
+        taskCount: this.countTasksByCategory(tasks, cat.id),
+        completedTaskCount: this.countCompletedTasksByCategory(tasks, cat.id),
+      })),
+    })),
+  );
 
   isLoading = true;
   errorMessage: string | null = null;

@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import {
   AlertController,
@@ -31,12 +32,13 @@ import {
   filterOutline,
   searchOutline,
 } from 'ionicons/icons';
-import { combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Category } from '../../../../core/models/category.model';
 import {
   Task,
   TaskPayload,
-  TaskStatus,
+  TaskStatus
 } from '../../../../core/models/task.model';
 import { CategoriesService } from '../../../categories/services/categories.service';
 import {
@@ -78,15 +80,54 @@ import { TasksService } from '../../services/tasks.service';
   ],
 })
 export class TasksPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly filterSubject = new BehaviorSubject<TaskFilterValue>('all');
+  private readonly searchSubject = new BehaviorSubject<string>('');
+
+  get selectedFilter(): TaskFilterValue {
+    return this.filterSubject.value;
+  }
+  set selectedFilter(value: TaskFilterValue) {
+    if (this.filterSubject.value !== value) {
+      this.filterSubject.next(value);
+    }
+  }
+
+  get searchQuery(): string {
+    return this.searchSubject.value;
+  }
+  set searchQuery(value: string) {
+    if (this.searchSubject.value !== value) {
+      this.searchSubject.next(value);
+    }
+  }
+
   readonly viewState$ = combineLatest({
     tasks: this.tasksService.tasks$,
     categories: this.categoriesService.categories$,
-  });
+    filter: this.filterSubject,
+    search: this.searchSubject,
+  }).pipe(
+    map(({ tasks, categories }) => {
+      const activeFilter = this.resolveActiveFilter(categories);
+      const filtered = this.filterTasks(tasks, categories);
+      return {
+        tasks,
+        categories,
+        filteredTasks: filtered.map((task) => ({
+          task,
+          category: this.findCategory(categories, task.categoryId),
+        })),
+        pendingCount: this.countPending(tasks),
+        completedCount: this.countCompleted(tasks),
+        activeFilter,
+        searchQuery: this.searchQuery,
+      };
+    }),
+  );
 
   isLoading = true;
   errorMessage: string | null = null;
-  selectedFilter: TaskFilterValue = 'all';
-  searchQuery = '';
   isCreateModalOpen = false;
   taskToEdit: Task | null = null;
 
@@ -107,12 +148,14 @@ export class TasksPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe((params) => {
-      const categoryId = params.get('categoryId');
-      if (categoryId) {
-        this.selectedFilter = categoryId;
-      }
-    });
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const categoryId = params.get('categoryId');
+        if (categoryId) {
+          this.selectedFilter = categoryId;
+        }
+      });
     void this.initializeTasks();
   }
 

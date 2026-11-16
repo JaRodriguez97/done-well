@@ -34,7 +34,8 @@ import {
   timeOutline,
   trendingUpOutline,
 } from 'ionicons/icons';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CATEGORY_ICON_REGISTRY } from '../../../../core/constants/category.constants';
 import {
   Category,
@@ -86,6 +87,10 @@ export class StatsPage implements OnInit {
     tasks: this.tasksService.tasks$,
     categories: this.categoriesService.categories$,
   });
+
+  readonly overview$: Observable<StatsOverview> = this.viewState$.pipe(
+    map(({ tasks, categories }) => this.buildStatsOverview(tasks, categories)),
+  );
 
   isLoading = true;
   isSyncing = false;
@@ -175,7 +180,7 @@ export class StatsPage implements OnInit {
           'uncategorized',
           'Sin categoría',
           'pricetag-outline',
-          'otros',
+          'pizarra',
           uncategorizedTasks,
         ),
       );

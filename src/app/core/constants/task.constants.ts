@@ -19,19 +19,19 @@ export const TASK_PRIORITY_OPTIONS: readonly TaskPriorityOption[] = [
     key: 'low',
     label: 'Baja',
     icon: 'flag-outline',
-    cssVar: 'var(--color-personal)',
+    cssVar: 'var(--dw-color-turquesa)',
   },
   {
     key: 'medium',
     label: 'Media',
     icon: 'flag-outline',
-    cssVar: 'var(--color-estudios)',
+    cssVar: 'var(--dw-color-azul)',
   },
   {
     key: 'high',
     label: 'Alta',
     icon: 'flame-outline',
-    cssVar: 'var(--color-urgente)',
+    cssVar: 'var(--dw-color-coral)',
   },
 ];
 
@@ -40,18 +40,18 @@ export const TASK_STATUS_OPTIONS: readonly TaskStatusOption[] = [
     key: 'pending',
     label: 'Pendiente',
     icon: 'time-outline',
-    cssVar: 'var(--color-otros)',
+    cssVar: 'var(--dw-color-pizarra)',
   },
   {
     key: 'in_progress',
     label: 'En progreso',
     icon: 'sync-outline',
-    cssVar: 'var(--color-compras)',
+    cssVar: 'var(--dw-color-ambar)',
   },
   {
     key: 'completed',
     label: 'Completada',
     icon: 'checkmark-circle-outline',
-    cssVar: 'var(--color-personal)',
+    cssVar: 'var(--dw-color-turquesa)',
   },
 ];

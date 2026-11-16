@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 import { Category } from '../../../../core/models/category.model';
 import { Task } from '../../../../core/models/task.model';
+import { createMockCategory } from '../../../../core/testing/test-fixtures';
 import { RemoteConfigService } from '../../../../core/services/remote-config.service';
 import { CategoriesService } from '../../../categories/services/categories.service';
 import { TasksService } from '../../../tasks/services/tasks.service';
@@ -16,13 +17,12 @@ describe('StatsPage', () => {
   let categoriesServiceSpy: jasmine.SpyObj<CategoriesService>;
   let remoteConfigServiceSpy: jasmine.SpyObj<RemoteConfigService>;
 
-  const sampleCategory: Category = {
+  const sampleCategory: Category = createMockCategory({
     id: 'cat-trabajo',
     name: 'Trabajo',
-    colorKey: 'trabajo',
+    colorKey: 'violeta',
     icon: 'briefcase-outline',
-    createdAt: '2025-01-01T00:00:00.000Z',
-  };
+  });
 
   const sampleTasks: Task[] = [
     {

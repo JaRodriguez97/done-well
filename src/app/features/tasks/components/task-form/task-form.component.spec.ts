@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Category } from '../../../../core/models/category.model';
+import { createMockCategory } from '../../../../core/testing/test-fixtures';
 import { TaskFormComponent } from './task-form.component';
 
 describe('TaskFormComponent', () => {
@@ -7,13 +8,12 @@ describe('TaskFormComponent', () => {
   let fixture: ComponentFixture<TaskFormComponent>;
 
   const sampleCategories: Category[] = [
-    {
+    createMockCategory({
       id: 'cat-compras',
       name: 'Compras',
-      colorKey: 'compras',
+      colorKey: 'ambar',
       icon: 'cart-outline',
-      createdAt: '2025-01-01T00:00:00.000Z',
-    },
+    }),
   ];
 
   beforeEach(async () => {

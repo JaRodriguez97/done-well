@@ -13,14 +13,14 @@
             <ion-row class="ion-align-items-center">
               <ion-col size="6" class="tasks-summary__metric tasks-summary__metric--bordered">
                 <ion-text class="tasks-summary__value">
-                  {{ countPending(state.tasks) }}
+                  {{ state.pendingCount }}
                 </ion-text>
                 <ion-text class="dw-text-muted">Pendientes</ion-text>
               </ion-col>
 
               <ion-col size="6" class="tasks-summary__metric">
                 <ion-text color="secondary" class="tasks-summary__value tasks-summary__value--accent">
-                  {{ countCompleted(state.tasks) }}
+                  {{ state.completedCount }}
                 </ion-text>
                 <ion-text class="dw-text-muted">Completadas</ion-text>
               </ion-col>
@@ -48,14 +48,14 @@
       <app-task-category-filter
         [categories]="state.categories"
         [tasks]="state.tasks"
-        [selectedFilter]="resolveActiveFilter(state.categories)"
+        [selectedFilter]="state.activeFilter"
         (filterChanged)="onFilterChange($event)"
       ></app-task-category-filter>
 
       <ion-searchbar
         class="tasks-page__searchbar"
         placeholder="Buscar tarea o subtarea..."
-        [value]="searchQuery"
+        [value]="state.searchQuery"
         [debounce]="150"
         show-clear-button="focus"
         aria-label="Buscar tareas o subtareas por texto"
@@ -93,14 +93,14 @@
             </ion-text>
           </ion-card-content>
         </ion-card>
-      } @else if (filterTasks(state.tasks, state.categories).length === 0) {
+      } @else if (state.filteredTasks.length === 0) {
         <ion-card class="dw-card tasks-page__state-card">
           <ion-card-content class="dw-state-box">
-            @if (searchQuery.trim().length > 0) {
+            @if (state.searchQuery.trim().length > 0) {
               <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
               <ion-text class="dw-title-section">Sin resultados de búsqueda</ion-text>
               <ion-text class="dw-text-muted">
-                No hay tareas ni subtareas que coincidan con &ldquo;{{ searchQuery }}&rdquo;.
+                No hay tareas ni subtareas que coincidan con &ldquo;{{ state.searchQuery }}&rdquo;.
               </ion-text>
               <ion-button
                 type="button"
@@ -135,10 +135,10 @@
           class="tasks-list"
           aria-label="Lista de tareas"
         >
-          @for (task of filterTasks(state.tasks, state.categories); track task.id) {
+          @for (item of state.filteredTasks; track item.task.id) {
             <app-task-item
-              [task]="task"
-              [category]="findCategory(state.categories, task.categoryId)"
+              [task]="item.task"
+              [category]="item.category"
               (toggleRequested)="onToggleTask($event)"
               (statusChanged)="onStatusChange($event)"
               (subtaskToggled)="onSubtaskToggle($event)"

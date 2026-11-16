@@ -45,7 +45,7 @@ describe('CategoryFormComponent', () => {
     spyOn(component.categorySaved, 'emit');
 
     component.nameControl.setValue('  Mascotas  ');
-    component.selectColor('compras');
+    component.selectColor('ambar');
     expect(component.showAllIcons).toBeFalse();
     expect(component.visibleIconOptions.length).toBe(6);
 
@@ -66,7 +66,7 @@ describe('CategoryFormComponent', () => {
     expect(component.validationError).toBeNull();
     expect(component.categorySaved.emit).toHaveBeenCalledOnceWith({
       name: 'Mascotas',
-      colorKey: 'compras',
+      colorKey: 'ambar',
       icon: 'paw-outline',
     });
     expect(component.nameControl.value).toBe('');
@@ -78,7 +78,7 @@ describe('CategoryFormComponent', () => {
     const target: Category = {
       id: 'cat-1',
       name: 'Veterinaria',
-      colorKey: 'estudios',
+      colorKey: 'azul',
       icon: 'paw-outline',
       createdAt: '2025-01-01T00:00:00.000Z',
     };
@@ -86,7 +86,7 @@ describe('CategoryFormComponent', () => {
     component.editingCategory = target;
     expect(component.isEditMode).toBeTrue();
     expect(component.nameControl.value).toBe('Veterinaria');
-    expect(component.selectedColorKey).toBe('estudios');
+    expect(component.selectedColorKey).toBe('azul');
     expect(component.selectedIcon).toBe('paw-outline');
     expect(
       component.visibleIconOptions.some(

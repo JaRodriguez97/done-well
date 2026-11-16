@@ -23,11 +23,11 @@
         @if (category) {
           <ion-chip
             class="task-item__chip"
-            [style.border-color]="'var(--color-' + category.colorKey + ')'"
+            [style.border-color]="'var(--dw-color-' + category.colorKey + ')'"
           >
             <ion-icon
               [name]="category.icon"
-              [style.color]="'var(--color-' + category.colorKey + ')'"
+              [style.color]="'var(--dw-color-' + category.colorKey + ')'"
               aria-hidden="true"
             ></ion-icon>
             <ion-label class="task-item__chip-label">{{

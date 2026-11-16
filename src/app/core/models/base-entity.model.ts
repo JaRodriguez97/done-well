@@ -1,14 +1,20 @@
+import { generateEntityId, validateRequiredText } from '../utils/entity.utils';
+
 export interface IdentifiableEntity {
   readonly id: string;
   readonly createdAt: string;
 }
 
-export abstract class BaseEntity<T> implements IdentifiableEntity {
+export interface SerializableEntity<T> {
+  toPlainObject(): T;
+}
+
+export abstract class BaseEntity<T> implements IdentifiableEntity, SerializableEntity<T> {
   readonly id: string;
   readonly createdAt: string;
 
   constructor(id?: string, createdAt?: string) {
-    this.id = id ?? BaseEntity.generateId();
+    this.id = id ?? generateEntityId();
     this.createdAt = createdAt ?? new Date().toISOString();
   }
 
@@ -18,23 +24,26 @@ export abstract class BaseEntity<T> implements IdentifiableEntity {
   abstract toPlainObject(): T;
 
   /**
-   * Valida que un texto requerido no esté vacío y retorna su valor sin espacios extremos.
+   * Compara dos entidades por su identificador único para validar identidad de dominio.
    */
-  protected static validateRequiredText(value: string, errorMessage: string): string {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      throw new Error(errorMessage);
+  equals(other: IdentifiableEntity | null | undefined): boolean {
+    if (!other) {
+      return false;
     }
-    return trimmed;
+    return this.id === other.id;
   }
 
   /**
-   * Genera un identificador único compatible con WebView y navegadores.
+   * Valida texto requerido delegando a la función pura de utilidad.
+   */
+  protected static validateRequiredText(value: string, errorMessage: string): string {
+    return validateRequiredText(value, errorMessage);
+  }
+
+  /**
+   * Genera un identificador único delegando a la función pura de utilidad.
    */
   protected static generateId(): string {
-    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-      return crypto.randomUUID();
-    }
-    return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    return generateEntityId();
   }
 }

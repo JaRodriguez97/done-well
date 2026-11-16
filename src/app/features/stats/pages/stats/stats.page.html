@@ -39,8 +39,7 @@
         <ion-text class="dw-text-muted">Calculando estadísticas...</ion-text>
       </ion-card-content>
     </ion-card>
-    } @else { @if (viewState$ | async; as state) { @if
-    (buildStatsOverview(state.tasks, state.categories); as overview) {
+    } @else { @if (overview$ | async; as overview) {
     <ion-card class="glass-dark stats-overview" aria-label="Progreso general">
       <ion-card-content class="stats-overview__content">
         <ion-row
@@ -294,7 +293,7 @@
             <ion-icon
               slot="start"
               [name]="item.icon"
-              [style.color]="'var(--color-' + item.colorKey + ')'"
+              [style.color]="'var(--dw-color-' + item.colorKey + ')'"
               aria-hidden="true"
             ></ion-icon>
 
@@ -319,13 +318,13 @@
           <ion-progress-bar
             class="stats-category-card__bar"
             [value]="item.completionRatio"
-            [style.--progress-background]="'var(--color-' + item.colorKey + ')'"
+            [style.--progress-background]="'var(--dw-color-' + item.colorKey + ')'"
             [attr.aria-label]="'Avance en ' + item.name + ' ' + item.completionPercent + '%'"
           ></ion-progress-bar>
         </ion-card-content>
       </ion-card>
       }
     </ion-list>
-    } } } }
+    } } }
   </ion-grid>
 </ion-content>

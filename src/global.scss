@@ -118,29 +118,53 @@ ion-title {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Acentos laterales por categoría (nunca fondo completo) */
-.dw-border-trabajo {
-  border-left: 4px solid var(--color-trabajo);
+/* Acentos laterales semánticos por tono de color (nunca fondo completo) */
+.dw-border-violeta {
+  border-left: 4px solid var(--dw-color-violeta);
 }
 
-.dw-border-personal {
-  border-left: 4px solid var(--color-personal);
+.dw-border-turquesa {
+  border-left: 4px solid var(--dw-color-turquesa);
 }
 
-.dw-border-estudios {
-  border-left: 4px solid var(--color-estudios);
+.dw-border-azul {
+  border-left: 4px solid var(--dw-color-azul);
 }
 
-.dw-border-compras {
-  border-left: 4px solid var(--color-compras);
+.dw-border-ambar {
+  border-left: 4px solid var(--dw-color-ambar);
 }
 
-.dw-border-urgente {
-  border-left: 4px solid var(--color-urgente);
+.dw-border-coral {
+  border-left: 4px solid var(--dw-color-coral);
 }
 
-.dw-border-otros {
-  border-left: 4px solid var(--color-otros);
+.dw-border-pizarra {
+  border-left: 4px solid var(--dw-color-pizarra);
+}
+
+.dw-border-esmeralda {
+  border-left: 4px solid var(--dw-color-esmeralda);
+}
+
+.dw-border-rosa {
+  border-left: 4px solid var(--dw-color-rosa);
+}
+
+.dw-border-indigo {
+  border-left: 4px solid var(--dw-color-indigo);
+}
+
+.dw-border-celeste {
+  border-left: 4px solid var(--dw-color-celeste);
+}
+
+.dw-border-fucsia {
+  border-left: 4px solid var(--dw-color-fucsia);
+}
+
+.dw-border-lavanda {
+  border-left: 4px solid var(--dw-color-lavanda);
 }
 
 /* Botones y accesibilidad táctil (>= 44x44px) */
@@ -181,8 +205,8 @@ ion-title {
   padding: var(--space-2) var(--space-3);
   border-radius: 10px;
   background: var(--dw-surface-dark);
-  border: 1px solid var(--color-urgente);
-  color: var(--color-urgente);
+  border: 1px solid var(--dw-color-coral);
+  color: var(--dw-color-coral);
   font-size: var(--font-size-sub);
 }
 

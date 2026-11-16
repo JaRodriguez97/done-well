@@ -190,7 +190,7 @@ ion-content {
 }
 
 .stats-dist-bar__segment--completed {
-  background: var(--color-trabajo, #7567f8);
+  background: var(--dw-color-violeta, #7567f8);
 }
 
 .stats-dist-bar__segment--inprogress {
@@ -223,7 +223,7 @@ ion-content {
 }
 
 .stats-dot--completed {
-  background: var(--color-trabajo, #7567f8);
+  background: var(--dw-color-violeta, #7567f8);
 }
 
 .stats-dot--inprogress {
@@ -312,12 +312,12 @@ ion-content {
 
 .stats-mini-card__icon-wrap--purple {
   background: rgba(117, 103, 248, 0.15);
-  color: var(--color-trabajo, #7567f8);
+  color: var(--dw-color-violeta, #7567f8);
 }
 
 .stats-mini-card__icon-wrap--danger {
   background: rgba(255, 118, 96, 0.2);
-  color: var(--color-urgente, #ff7660);
+  color: var(--dw-color-coral, #ff7660);
 }
 
 .stats-mini-card__value {
@@ -346,5 +346,5 @@ ion-content {
 }
 
 .dw-text-danger {
-  color: var(--color-urgente, #ff7660) !important;
+  color: var(--dw-color-coral, #ff7660) !important;
 }

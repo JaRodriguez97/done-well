@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { createMockCategory } from '../../../../core/testing/test-fixtures';
 import { CategoryItemComponent } from './category-item.component';
 
 describe('CategoryItemComponent', () => {
@@ -12,21 +13,20 @@ describe('CategoryItemComponent', () => {
 
     fixture = TestBed.createComponent(CategoryItemComponent);
     component = fixture.componentInstance;
-    component.category = {
+    component.category = createMockCategory({
       id: 'cat-trabajo',
       name: 'Trabajo',
-      colorKey: 'trabajo',
+      colorKey: 'violeta',
       icon: 'briefcase-outline',
-      createdAt: '2025-01-01T00:00:00.000Z',
-    };
+    });
     component.taskCount = 3;
     fixture.detectChanges();
   });
 
   it('should create and compute border and glass class', () => {
     expect(component).toBeTruthy();
-    expect(component.borderClass).toBe('dw-border-trabajo');
-    expect(component.glassClass).toBe('category-card--trabajo');
+    expect(component.borderClass).toBe('dw-border-violeta');
+    expect(component.glassClass).toBe('category-card--violeta');
   });
 
   it('should emit category when edit is requested', () => {

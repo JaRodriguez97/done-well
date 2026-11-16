@@ -67,7 +67,7 @@ export class CategoryFormComponent {
   readonly colorOptions = CATEGORY_COLOR_OPTIONS;
   readonly iconOptions = CATEGORY_ICON_OPTIONS;
   readonly nameControl = new FormControl('', { nonNullable: true });
-  selectedColorKey: CategoryColorKey = 'trabajo';
+  selectedColorKey: CategoryColorKey = 'violeta';
   selectedIcon: string = DEFAULT_CATEGORY_ICON;
   showAllIcons = false;
   validationError: string | null = null;
@@ -88,7 +88,7 @@ export class CategoryFormComponent {
       return;
     }
     this.nameControl.setValue('');
-    this.selectedColorKey = 'trabajo';
+    this.selectedColorKey = 'violeta';
     this.selectedIcon = DEFAULT_CATEGORY_ICON;
   }
 
@@ -193,7 +193,7 @@ export class CategoryFormComponent {
 
     if (!this.isEditMode) {
       this.nameControl.setValue('');
-      this.selectedColorKey = 'trabajo';
+      this.selectedColorKey = 'violeta';
       this.selectedIcon = DEFAULT_CATEGORY_ICON;
       this.showAllIcons = false;
     }
@@ -202,7 +202,7 @@ export class CategoryFormComponent {
   onCancelEdit(): void {
     this.validationError = null;
     this.nameControl.setValue('');
-    this.selectedColorKey = 'trabajo';
+    this.selectedColorKey = 'violeta';
     this.selectedIcon = DEFAULT_CATEGORY_ICON;
     this.showAllIcons = false;
     this.editCancelled.emit();

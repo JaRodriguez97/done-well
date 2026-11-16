@@ -4,6 +4,7 @@ import { AlertButton, AlertController } from '@ionic/angular/standalone';
 import { BehaviorSubject } from 'rxjs';
 import { Category } from '../../../../core/models/category.model';
 import { Task } from '../../../../core/models/task.model';
+import { createMockCategory } from '../../../../core/testing/test-fixtures';
 import { TasksService } from '../../../tasks/services/tasks.service';
 import { CategoriesService } from '../../services/categories.service';
 import { CategoriesPage } from './categories.page';
@@ -18,13 +19,12 @@ describe('CategoriesPage', () => {
   let alertControllerSpy: jasmine.SpyObj<AlertController>;
   let alertElementSpy: jasmine.SpyObj<HTMLIonAlertElement>;
 
-  const sampleCategory: Category = {
+  const sampleCategory: Category = createMockCategory({
     id: 'cat-trabajo',
     name: 'Trabajo',
-    colorKey: 'trabajo',
+    colorKey: 'violeta',
     icon: 'briefcase-outline',
-    createdAt: '2025-01-01T00:00:00.000Z',
-  };
+  });
 
   beforeEach(async () => {
     categoriesSubject = new BehaviorSubject<Category[]>([sampleCategory]);
@@ -104,7 +104,7 @@ describe('CategoriesPage', () => {
     component.openCreateModal();
     await component.onSaveCategory({
       name: 'Salud',
-      colorKey: 'personal',
+      colorKey: 'turquesa',
     });
     expect(categoriesServiceSpy.addCategory).toHaveBeenCalledTimes(1);
     expect(component.isFormModalOpen).toBeFalse();
@@ -115,13 +115,13 @@ describe('CategoriesPage', () => {
 
     await component.onSaveCategory({
       name: 'Oficina',
-      colorKey: 'trabajo',
+      colorKey: 'violeta',
     });
     expect(categoriesServiceSpy.updateCategory).toHaveBeenCalledOnceWith(
       'cat-trabajo',
       {
         name: 'Oficina',
-        colorKey: 'trabajo',
+        colorKey: 'violeta',
       },
     );
     expect(component.isFormModalOpen).toBeFalse();
@@ -136,7 +136,7 @@ describe('CategoriesPage', () => {
     component.openCreateModal();
     await component.onSaveCategory({
       name: 'Trabajo',
-      colorKey: 'trabajo',
+      colorKey: 'violeta',
     });
 
     expect(component.isFormModalOpen).toBeTrue();
@@ -248,9 +248,9 @@ describe('CategoriesPage', () => {
 
   it('should correctly identify expanded and pushed-down cards', () => {
     const list: Category[] = [
-      { id: 'c1', name: 'C1', colorKey: 'trabajo', icon: 'paw-outline', createdAt: '' },
-      { id: 'c2', name: 'C2', colorKey: 'personal', icon: 'paw-outline', createdAt: '' },
-      { id: 'c3', name: 'C3', colorKey: 'estudios', icon: 'paw-outline', createdAt: '' },
+      { id: 'c1', name: 'C1', colorKey: 'violeta', icon: 'paw-outline', createdAt: '' },
+      { id: 'c2', name: 'C2', colorKey: 'turquesa', icon: 'paw-outline', createdAt: '' },
+      { id: 'c3', name: 'C3', colorKey: 'azul', icon: 'paw-outline', createdAt: '' },
     ];
 
     expect(component.isCardExpanded('c2')).toBeFalse();

@@ -75,10 +75,8 @@
               "
               [style.z-index]="isCardExpanded(category.id) ? 30 : i + 1"
               [category]="category"
-              [taskCount]="countTasksByCategory(state.tasks, category.id)"
-              [completedTaskCount]="
-                countCompletedTasksByCategory(state.tasks, category.id)
-              "
+              [taskCount]="category.taskCount"
+              [completedTaskCount]="category.completedTaskCount"
               [isExpanded]="isCardExpanded(category.id)"
               [isLast]="i === state.categories.length - 1"
               (toggleRequested)="onToggleCategory(category.id)"

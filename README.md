@@ -46,7 +46,7 @@
     </td>
     <td width="50%" valign="top">
       <h3>🏷️ Categorías Personalizadas</h3>
-      Creación, edición y eliminación en modal con selector de <strong>24 íconos Ionicons</strong> y <strong>6 colores semánticos</strong>. Al eliminar una categoría, las tareas asociadas se desvinculan sin perderse.
+      Creación, edición y eliminación en modal con selector de <strong>24 íconos Ionicons</strong> y paleta de <strong>12 colores semánticos en español</strong>. Al eliminar una categoría, el usuario decide si conservar las tareas o eliminarlas en cascada.
     </td>
   </tr>
   <tr>
@@ -75,19 +75,24 @@
 
 ## Paleta Visual (_Midnight Violet_)
 
-El sistema visual define los colores de interfaz y categorías como tokens CSS globales en [`src/theme/variables.scss`](src/theme/variables.scss), reservando el color de categoría para acentos laterales de `4px`, chips e íconos:
+El sistema visual define los colores de interfaz y tokens semánticos en [`src/theme/variables.scss`](src/theme/variables.scss). Los tonos se aplican de forma controlada a acentos laterales de `4px`, chips, bordes e íconos:
 
-| Rol Visual                    | Token CSS                | Hexadecimal |                                     Muestra                                     |
-| :---------------------------- | :----------------------- | :---------: | :-----------------------------------------------------------------------------: |
-| Fondo Nocturno Base           | `--ion-background-color` |  `#0B1020`  | ![#0B1020](https://img.shields.io/badge/%20-%230B1020-0B1020?style=flat-square) |
-| Superficie / Tarjetas         | `--dw-surface-dark`      |  `#151B30`  | ![#151B30](https://img.shields.io/badge/%20-%23151B30-151B30?style=flat-square) |
-| Primario / **Trabajo**        | `--color-trabajo`        |  `#7567F8`  | ![#7567F8](https://img.shields.io/badge/%20-%237567F8-7567F8?style=flat-square) |
-| Acento Secundario             | `--ion-color-secondary`  |  `#A99EFF`  | ![#A99EFF](https://img.shields.io/badge/%20-%23A99EFF-A99EFF?style=flat-square) |
-| Categoría **Personal**        | `--color-personal`       |  `#40E0D0`  | ![#40E0D0](https://img.shields.io/badge/%20-%2340E0D0-40E0D0?style=flat-square) |
-| Categoría **Estudios**        | `--color-estudios`       |  `#6798FF`  | ![#6798FF](https://img.shields.io/badge/%20-%236798FF-6798FF?style=flat-square) |
-| Categoría **Compras**         | `--color-compras`        |  `#FFCC00`  | ![#FFCC00](https://img.shields.io/badge/%20-%23FFCC00-FFCC00?style=flat-square) |
-| Categoría **Urgente** / Error | `--color-urgente`        |  `#FF7660`  | ![#FF7660](https://img.shields.io/badge/%20-%23FF7660-FF7660?style=flat-square) |
-| Categoría **Otros**           | `--color-otros`          |  `#667499`  | ![#667499](https://img.shields.io/badge/%20-%23667499-667499?style=flat-square) |
+| Rol / Tono Semántico      | Token CSS                | Hexadecimal |                                     Muestra                                     |
+| :------------------------ | :----------------------- | :---------: | :-----------------------------------------------------------------------------: |
+| Fondo Nocturno Base       | `--ion-background-color` |  `#0B1020`  | ![#0B1020](https://img.shields.io/badge/%20-%230B1020-0B1020?style=flat-square) |
+| Superficie / Tarjetas     | `--dw-surface-dark`      |  `#151B30`  | ![#151B30](https://img.shields.io/badge/%20-%23151B30-151B30?style=flat-square) |
+| Violeta (Primario)        | `--dw-color-violeta`     |  `#7567F8`  | ![#7567F8](https://img.shields.io/badge/%20-%237567F8-7567F8?style=flat-square) |
+| Lavanda (Secundario)      | `--dw-color-lavanda`     |  `#A99EFF`  | ![#A99EFF](https://img.shields.io/badge/%20-%23A99EFF-A99EFF?style=flat-square) |
+| Turquesa                  | `--dw-color-turquesa`    |  `#40E0D0`  | ![#40E0D0](https://img.shields.io/badge/%20-%2340E0D0-40E0D0?style=flat-square) |
+| Azul                      | `--dw-color-azul`        |  `#6798FF`  | ![#6798FF](https://img.shields.io/badge/%20-%236798FF-6798FF?style=flat-square) |
+| Ámbar                     | `--dw-color-ambar`       |  `#FFCC00`  | ![#FFCC00](https://img.shields.io/badge/%20-%23FFCC00-FFCC00?style=flat-square) |
+| Coral (Peligro / Urgente) | `--dw-color-coral`       |  `#FF7660`  | ![#FF7660](https://img.shields.io/badge/%20-%23FF7660-FF7660?style=flat-square) |
+| Pizarra                   | `--dw-color-pizarra`     |  `#667499`  | ![#667499](https://img.shields.io/badge/%20-%23667499-667499?style=flat-square) |
+| Esmeralda                 | `--dw-color-esmeralda`   |  `#10B981`  | ![#10B981](https://img.shields.io/badge/%20-%2310B981-10B981?style=flat-square) |
+| Rosa                      | `--dw-color-rosa`        |  `#F43F5E`  | ![#F43F5E](https://img.shields.io/badge/%20-%23F43F5E-F43F5E?style=flat-square) |
+| Índigo                    | `--dw-color-indigo`      |  `#6366F1`  | ![#6366F1](https://img.shields.io/badge/%20-%236366F1-6366F1?style=flat-square) |
+| Celeste                   | `--dw-color-celeste`     |  `#0EA5E9`  | ![#0EA5E9](https://img.shields.io/badge/%20-%230EA5E9-0EA5E9?style=flat-square) |
+| Fucsia                    | `--dw-color-fucsia`      |  `#D946EF`  | ![#D946EF](https://img.shields.io/badge/%20-%23D946EF-D946EF?style=flat-square) |
 
 ---
 
@@ -112,7 +117,9 @@ src/app/
 ├── core/
 │   ├── constants/       # Claves de Storage, Remote Config y catálogo de íconos/colores
 │   ├── models/          # Entidades POO (BaseEntity, TaskItem, CategoryItem) y contratos TS
-│   └── services/        # Servicios transversales (StorageService, RemoteConfigService)
+│   ├── services/        # Servicios transversales (StorageService, RemoteConfigService)
+│   ├── testing/         # Fixtures centralizadas y mocks tipados para pruebas unitarias
+│   └── utils/           # Utilidades puras de validación, ordenamiento e identidades
 ├── features/
 │   ├── tasks/           # Vista de tareas, modal de creación, slider horizontal y TasksService
 │   ├── categories/      # Vista de categorías, modal/formulario y CategoriesService
